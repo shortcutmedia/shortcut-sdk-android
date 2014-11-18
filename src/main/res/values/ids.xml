@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2014 Shortcut Media AG - All Rights Reserved.
+  ~ Unauthorized copying of this file, via any medium is strictly prohibited
+  ~ Proprietary and confidential
+  -->
+
+<resources>
+    <!-- Messages IDs for live-scanner-->
+    <item type="id" name="auto_focus"/>
+    <item type="id" name="recognize"/>
+    <item type="id" name="recognize_qr_only"/>
+    <item type="id" name="recognition_failed"/>
+    <item type="id" name="recognition_succeeded"/>
+    <item type="id" name="recognition_error"/>
+    <item type="id" name="recognition_info"/>
+    <item type="id" name="restart_recognition" />
+    <item type="id" name="continue_kooaba_recognition"/>
+    <item type="id" name="pause_kooaba_recognition"/>
+    <item type="id" name="stop_scanning"/>
+</resources>

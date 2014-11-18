@@ -1,0 +1,134 @@
+package com.scm.reader.livescanner.sdk;
+
+import android.content.Context;
+import android.location.Location;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
+
+import com.scm.reader.livescanner.sdk.camera.CameraManager;
+import com.scm.shortcutreadersdk.R;
+
+/**
+ * Handler of the ScanActivity. Spawns another thread (QueryThread) and sends it frames for recognition.
+ * It receives events with responses from this thread and sends them back to the activity.
+ */
+public class ScanHandler extends Handler {
+  private static final String TAG = ScanHandler.class.getSimpleName();
+  
+  private enum State { PREVIEW, SUCCESS, FINISHED }
+
+  private CameraManager cameraManager;
+  private QueryThread queryThread;
+  private State state;
+  private Context context;
+  private Location location;
+
+  // registered event listener to send events (recognition, error etc.) to
+  private KEventListener kEventListener;
+
+  public ScanHandler(CameraManager camManager, KEventListener eventListener, Context context, Location location) {
+    kEventListener = eventListener;
+    queryThread = new QueryThread(this);
+    queryThread.start();
+    this.context = context;
+    this.location = location;
+    
+    state = State.SUCCESS;
+
+    cameraManager = camManager;
+    cameraManager.startPreview();
+    restartPreviewAndRecognize();
+  }
+
+  /**
+   * @param message: can be one of:
+   * - auto_focus: handler will request another autofocus from the camera;
+   * - recognition_succeeded: an image has been recognized;
+   * - recognition_failed: the image was not recognized;
+   * - recognition_error: there has been an error; (maybe introduce multiple types of errors)
+   * - recognition_info: received some information;
+   * - restart_recognition: restarts the recognition process;
+   */
+  @Override
+  public void handleMessage(Message message) {
+    if (message.what == R.id.auto_focus) {
+        // When one auto focus pass finishes, start another -> continuous AF.
+        if (state == State.PREVIEW) {
+            cameraManager.requestAutoFocus(this, R.id.auto_focus);
+        }
+    } else if (message.what == R.id.restart_recognition) {
+        restartPreviewAndRecognize();
+        Log.d(TAG, "RECEIVED restart recognition. Trying to recognize");
+    } else if (message.what == R.id.continue_kooaba_recognition) {
+        Log.d(TAG, "RECEIVED continue kooaba recognition");
+        cameraManager.requestPreviewFrame(queryThread.getHandler(), R.id.recognize);
+        kEventListener.onContinueKooabaRecognition((String) message.obj);
+    } else if (message.what == R.id.pause_kooaba_recognition) {
+        Log.d(TAG, "RECEIVED continue kooaba recognition");
+        cameraManager.requestPreviewFrame(queryThread.getHandler(), R.id.recognize_qr_only);
+        kEventListener.onPauseKooabaRecognition((String) message.obj);
+    } else if (message.what == R.id.recognition_succeeded) {
+        state = State.SUCCESS;
+        Log.d(TAG, "RECEIVED recognition succeeded; Should stop!");
+        kEventListener.onImageRecognized((KEvent) message.obj);
+    } else if (message.what == R.id.recognition_failed) {
+        // Decode as fast as possible, so when one decode fails, start another.
+        Log.d(TAG, "RECEIVED recognition failed; Trying again");
+        state = State.PREVIEW;
+        cameraManager.requestPreviewFrame(queryThread.getHandler(), R.id.recognize);
+        //cameraManager.requestPreviewFrame(queryThread.getHandler(), R.id.recognize_qr_only);
+        kEventListener.onImageNotRecognized((KEvent) message.obj);
+    } else if (message.what == R.id.recognition_info) {
+        Log.d(TAG, "RECEIVED recognition info; Trying again");
+        kEventListener.onInfo((String) message.obj);
+        if (state == State.PREVIEW) {
+            cameraManager.requestPreviewFrame(queryThread.getHandler(), R.id.recognize);
+        }
+    } else if (message.what == R.id.recognition_error) {
+        Log.d(TAG, "RECEIVED recognition error: Should stop!");
+        kEventListener.onError((Exception) message.obj);
+        cameraManager.requestPreviewFrame(queryThread.getHandler(), R.id.recognize);
+    }
+  }
+
+  private void restartPreviewAndRecognize() {
+    if (state == State.SUCCESS) {
+      state = State.PREVIEW;
+      cameraManager.requestPreviewFrame(queryThread.getHandler(), R.id.recognize);
+      cameraManager.requestAutoFocus(this, R.id.auto_focus);
+    }
+  }
+
+  /**
+   * Stop the recognition process (the camera preview and the queryThread).
+   */
+  public void quitSynchronously() {
+    state = State.FINISHED;
+    cameraManager.stopPreview();
+    Message quit = Message.obtain(queryThread.getHandler(), R.id.stop_scanning);
+    quit.sendToTarget();
+    try {
+      // Wait at most half a second; should be enough time, and onPause() will timeout quickly
+      queryThread.join(500L);
+    } catch (InterruptedException e) {
+      // continue
+    }
+    Log.d(TAG, "The thread should have finished");
+    // Be absolutely sure we don't send any queued up messages
+    removeMessages(R.id.recognition_failed);
+    removeMessages(R.id.recognition_succeeded);
+  }
+
+  public CameraManager getCameraManager() {
+    return cameraManager;
+  }
+  
+  public Context getContext(){
+	  return this.context;
+  }
+  
+  public Location getLocation(){
+	  return this.location;
+  }
+}

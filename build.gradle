@@ -26,5 +26,8 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile files('libs/commons-codec-1.4.jar')
+    compile files('libs/commons-io-1.2.jar')
+    compile files('libs/zxing-2.1.jar')
     compile 'com.android.support:appcompat-v7:21.0.0'
 }

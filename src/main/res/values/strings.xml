@@ -6,4 +6,8 @@
 
 <resources>
     <string name="app_name">Shortcut Reader SDK</string>
+
+    <string name="multiple_matches">Multiple Matches</string>
+    <string name="image_not_recognized_title">Unrecognized</string>
+    <string name="image_not_sent">Not submitted</string>
 </resources>
