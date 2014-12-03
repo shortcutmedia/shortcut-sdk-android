@@ -1,0 +1,300 @@
+/*
+ * Copyright (c) 2014 Shortcut Media AG - All Rights Reserved.
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
+
+package com.scm.reader.livescanner.ui;
+
+import android.app.Activity;
+import android.content.Context;
+import android.location.Location;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.SurfaceView;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.ImageButton;
+import android.widget.TextView;
+
+import com.scm.reader.livescanner.sdk.KEvent;
+import com.scm.reader.livescanner.sdk.KEventListener;
+import com.scm.reader.livescanner.sdk.KooabaScanner;
+import com.scm.reader.livescanner.sdk.animation.ScannerAnimation;
+import com.scm.reader.livescanner.util.Utils;
+import com.scm.shortcutreadersdk.R;
+
+public class ScannerView implements KEventListener {
+
+    public static final String TAG = "com.scm.reader.livescanner.ScannerView";
+
+    private Activity mHoldingActivity;
+    private Location mLocation;
+    private KooabaScanner mScanner;
+    private ScannerAnimation mScannerAnimation;
+
+    private View mAnimationView;
+
+    private boolean isInfoViewOpen = false;
+
+
+    private static Callbacks sDummyCallbacks = new Callbacks() {
+        @Override
+        public void onImageRecognized(KEvent event) {}
+
+        @Override
+        public void onImageNotRecognized(KEvent event) {}
+
+        @Override
+        public void onChangeCameraMode() {}
+    };
+
+    private Callbacks mCallbacks = sDummyCallbacks;
+
+    private static InfoCallback sDummyInfoCallbacks = new InfoCallback() {
+        @Override
+        public void onInfoViewOpen() {}
+
+        @Override
+        public void onInfoViewClose() {}
+
+    };
+
+    private InfoCallback mInfoCallback = sDummyInfoCallbacks;
+
+    /**
+     * Required interface for hosting activites
+     */
+    public interface Callbacks {
+        void onImageRecognized(KEvent event);
+        void onImageNotRecognized(KEvent event);
+        void onChangeCameraMode();
+    }
+
+    public interface InfoCallback {
+        void onInfoViewOpen();
+        void onInfoViewClose();
+    }
+
+    public ScannerView(Activity holdingActivity, Location location) {
+        mHoldingActivity = holdingActivity;
+        mLocation = location;
+
+        mScanner = new KooabaScanner(mHoldingActivity, mLocation);
+        mScanner.setKEventListener(this);
+    }
+
+    // Live cycle methods
+
+    public void onCreate(Bundle savedInstanceState) {
+        initializeWindow();
+    }
+
+    public void onResume() {
+        startScanner();
+        //animationShown = true;
+    }
+
+    public void onPause() {
+        stopScanner();
+        //animationShown = false;
+    }
+
+    public void initializeWindow() {
+        // set up window
+
+        WindowManager manager = (WindowManager) mHoldingActivity.getSystemService(Context.WINDOW_SERVICE);
+        int screenWidth = Utils.getScreenResolution(manager).x;
+        int screenHeight = Utils.getScreenResolution(manager).y;
+
+        LayoutInflater inflater = mHoldingActivity.getLayoutInflater();
+        mAnimationView = inflater.inflate(R.layout.scanner_animation, null);
+        View scannerView = inflater.inflate(R.layout.scanner, null);
+        View bottomBar = inflater.inflate(R.layout.bottom_bar, null);
+
+        mScannerAnimation = new ScannerAnimation(mHoldingActivity, mAnimationView);
+
+        Window window = mHoldingActivity.getWindow();
+        window.setFormat(android.graphics.PixelFormat.TRANSLUCENT);
+        window.addContentView(scannerView, new ViewGroup.LayoutParams(screenWidth, screenHeight));
+        window.addContentView(mAnimationView, new ViewGroup.LayoutParams(screenWidth * 2, screenHeight * 2));
+        window.addContentView(bottomBar, new ViewGroup.LayoutParams(screenWidth, screenHeight));
+
+        ImageButton infoButton = (ImageButton) mHoldingActivity.findViewById(R.id.info_button);
+        infoButton.setImageResource(R.drawable.ibuttonstates);
+        infoButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                Log.d(TAG, "InfoButton clicked");
+                if (isInfoViewOpen) {
+                    closeInfoView();
+                } else {
+                    openInfoView();
+                }
+            }
+        });
+
+        ImageButton changeModeBtn = (ImageButton) mHoldingActivity.findViewById(R.id.change_mode_button);
+        changeModeBtn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                mCallbacks.onChangeCameraMode();
+            }
+        });
+
+        // FIXME: where does this belong?
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//
+//                try {
+//                    Thread.sleep(9000);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//
+//                ScanActivity.this.runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        welcomeGone=true;
+//                        ScanActivity.this.findViewById(R.id.take_picture_instructions).setVisibility(View.GONE);
+//                    }
+//                });
+//
+//
+//            }
+//        }).start();
+
+
+    }
+
+    public void openInfoView() {
+        Log.d(TAG, "open InfoView");
+        mInfoCallback.onInfoViewOpen();
+        stopScanner();
+        isInfoViewOpen = true;
+    }
+
+    public void closeInfoView() {
+        Log.d(TAG, "close InfoView");
+        mInfoCallback.onInfoViewClose();
+        startScanner();
+        isInfoViewOpen = false;
+    }
+
+    public void startScanner() {
+        Log.d(TAG, "start scanner");
+        SurfaceView surfaceView = (SurfaceView) mHoldingActivity.findViewById(R.id.camerasurface);
+        mScanner.start(surfaceView, mLocation);
+        mScannerAnimation.start();
+    }
+
+    public void stopScanner() {
+        Log.d(TAG, "stop scanner");
+        mScanner.stop();
+        mScannerAnimation.stop();
+    }
+
+    public void onAttach(Activity activity) {
+        mCallbacks = (Callbacks)activity;
+    }
+
+    public void onDetach() {
+        mCallbacks = sDummyCallbacks;
+    }
+
+    public void onStart() {
+        onAttach(mHoldingActivity);
+    }
+
+    public void onStop() {
+        onDetach();
+    }
+
+
+    @Override
+    public void onImageRecognized(KEvent event) {
+        mCallbacks.onImageRecognized(event);
+    }
+
+    @Override
+    public void onImageNotRecognized(KEvent event) {
+        mCallbacks.onImageNotRecognized(event);
+    }
+
+    @Override
+    public void onError(Exception e) {
+        Log.e("ScanActivity onError", e.getClass().getSimpleName() + ": " + e.getMessage());
+    }
+
+    @Override
+    public void onInfo(String message) {
+
+    }
+
+    @Override
+    public void onContinueKooabaRecognition(String message) {
+        Log.d(TAG, "onContinueKooabaRecognition (message=" + message);
+        if (!mScannerAnimation.isAnimationVisible()) {
+            mScannerAnimation.start();
+        }
+
+        // FIXME: don't hide the toast if scanner mode indicator is still displayed
+//        if(welcomeGone==true)
+//        {
+
+            hideOverlayToast();
+//        }
+    }
+
+    @Override
+    public void onPauseKooabaRecognition(String message) {
+        Log.d(TAG, "onPauseKooabaRecognition (message=" + message);
+        if (!"moving".equals(message)) {
+            mScannerAnimation.stop();
+
+            mHoldingActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    ((TextView) mHoldingActivity.findViewById(R.id.modename)).setText(R.string.LiveScannerItemNotRecognizedText);
+                    mHoldingActivity.findViewById(R.id.modedetails).setVisibility(View.GONE);
+                    showOverlayToast();
+
+
+                    // FIXME: Don't understand what effect this code has?
+//                    new Thread(new Runnable() {
+//                      @Override
+//                      public void run() {
+//                          try {
+//                              Thread.sleep(15000);
+//                          } catch (InterruptedException e) {
+//                              e.printStackTrace();
+//                          }
+//                          mHoldingActivity.runOnUiThread(new Runnable() {
+//                              @Override
+//                              public void run() {
+//                                  mHoldingActivity.findViewById(R.id.take_picture_instructions).setVisibility(View.VISIBLE);
+//                              }
+//                          });
+//                      }
+//                  }).start();
+
+                }
+            });
+
+        }
+    }
+
+    public void setInfoCallback(InfoCallback infoCallback) {
+        mInfoCallback = infoCallback;
+    }
+
+    private void showOverlayToast() {
+        mHoldingActivity.findViewById(R.id.take_picture_instructions).setVisibility(View.VISIBLE);
+    }
+
+    private void hideOverlayToast() {
+        mHoldingActivity.findViewById(R.id.take_picture_instructions).setVisibility(View.GONE);
+    }
+}

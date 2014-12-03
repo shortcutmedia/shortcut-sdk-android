@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:gravity="bottom"
+                android:orientation="vertical"
+                android:id="@+id/camera_view">
+
+
+
+    <SurfaceView
+        android:id="@+id/camerasurface"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_toLeftOf="@+id/take_picture_layout" />
+
+    <!--
+    <RelativeLayout 
+        android:id="@+id/camera_transparent_border_overlay"
+        android:layout_height="fill_parent"
+        android:layout_width="fill_parent">
+
+        <com.aqris.kooaba.paperboy.view.TransparentBorderOverlay
+            android:layout_height="fill_parent"
+            android:layout_width="fill_parent" />
+             
+    </RelativeLayout>-->
+    
+    <RelativeLayout 
+        android:id="@+id/info_button_layout"
+        android:layout_height="fill_parent"
+        android:layout_width="fill_parent"
+        android:scaleType="fitCenter"
+        android:orientation="horizontal">
+    </RelativeLayout>
+
+    <RelativeLayout
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#00000000"
+            >
+    </RelativeLayout>
+
+
+    <RelativeLayout
+            android:id="@+id/take_picture_instructions"
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:gravity="top"
+            android:background="@drawable/instructionbackground"
+            android:layout_margin="20dp"
+            android:padding="20dp"
+            >
+
+        <TextView
+                android:id="@+id/modename"
+
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="@string/LiveScanningModeStatusTitle"
+                android:gravity="center"
+
+                android:textColor="@android:color/white"
+
+                android:textSize="20dp"
+                android:padding="4dp"
+                android:paddingBottom="0dp" />
+
+        <TextView
+                android:id="@+id/modedetails"
+                android:layout_below="@+id/modename"
+                android:gravity="center"
+                android:layout_centerHorizontal="true"
+
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="@string/LiveScanningModeStatusSubtitle"
+                android:textColor="@android:color/white"
+                android:textSize="16dp"
+                android:padding="4dp" />
+
+
+
+    </RelativeLayout>
+
+
+</RelativeLayout>

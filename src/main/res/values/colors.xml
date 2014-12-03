@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+  <color name="toolbar_gray">#252525</color>
+
+  <color name="light_text">#666666</color>
+  <color name="dark_text">#333333</color>    
+  <color name="sections_light_text">#aaaaaa</color>
+
+  <color name="section_background">#dddddd</color>
+      
+  <color name="list_item_background">#efefef</color>   
+  <color name="list_item_border">#cccccc</color>
+  <color name="list_item_border_dark">#a9a9a9</color>
+  
+  <color name="camera_gray">#050505</color>
+  <color name="pressed_button">#878787</color>
+      
+  <color name="separator_gray">#88888888</color>
+      
+  <color name="orange">#ff6600</color>
+  <color name="white">#ffffff</color>
+  <color name="background_light_gray">#f9f9f9</color>
+</resources>

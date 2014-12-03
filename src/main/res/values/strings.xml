@@ -10,4 +10,11 @@
     <string name="multiple_matches">Multiple Matches</string>
     <string name="image_not_recognized_title">Unrecognized</string>
     <string name="image_not_sent">Not submitted</string>
+    <string name="LiveScannerItemNotRecognizedText">No Results Found</string>
+
+    <string name="LiveScanningModeStatusTitle">Scanning Mode</string>
+    <string name="LiveScanningModeStatusSubtitle">Scan full page, billboard or code</string>
+    <string name="SingleShotModeStatusTitle">Snapshot Mode</string>
+    <string name="SingleShotModeStatusSubtitle">Capture full page or billboard</string>
+
 </resources>
