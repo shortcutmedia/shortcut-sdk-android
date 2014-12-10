@@ -73,6 +73,8 @@ public class LegacyCamera {
             stopCamera();
         }
 
+        orientationListener.enable();
+
         mCamera = Camera.open();
         Camera.Parameters p = mCamera.getParameters();
 
@@ -115,7 +117,9 @@ public class LegacyCamera {
             mCamera.stopPreview();
             mCamera.release();
             mCamera = null;
+            orientationListener.disable();
             isCameraStarted = false;
+
         }
     }
 

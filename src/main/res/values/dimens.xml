@@ -9,5 +9,6 @@
 
     <dimen name="bottom_icon_width">126dp</dimen>
     <dimen name="bottom_toolbar">68dp</dimen>
+    <dimen name="take_picture_size">60dp</dimen>
 
 </resources>
