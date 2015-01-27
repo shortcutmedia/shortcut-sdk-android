@@ -44,6 +44,7 @@ public class KConfig {
   private Integer scale;
   private Integer jpegQuality;
   private Integer uploadJpegQuality;
+  private Integer uploadJpegMaxWidthHeight;
 
   protected static final Object configLock = new Object();
 
@@ -61,6 +62,8 @@ public class KConfig {
       scale              = 640;
       jpegQuality        = 50;
       uploadJpegQuality  = 75;
+      uploadJpegMaxWidthHeight = 800;
+
     }
   }
 
@@ -152,5 +155,13 @@ public class KConfig {
 
   public void setUploadJpegQuality(Integer uploadJpegQuality) {
     this.uploadJpegQuality = uploadJpegQuality;
+  }
+
+  public Integer getUploadJpegMaxWidthHeight() {
+    return uploadJpegMaxWidthHeight;
+  }
+
+  public void setUploadJpegMaxWidthHeight(Integer uploadJpegMaxWidthHeight) {
+    this.uploadJpegMaxWidthHeight = uploadJpegMaxWidthHeight;
   }
 }

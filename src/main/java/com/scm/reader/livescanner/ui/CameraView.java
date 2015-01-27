@@ -8,11 +8,16 @@ package com.scm.reader.livescanner.ui;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.hardware.Camera;
+import android.location.Location;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Vibrator;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Display;
@@ -22,26 +27,39 @@ import android.view.OrientationEventListener;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.webkit.WebView;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 
+import com.scm.reader.livescanner.sdk.KConfig;
 import com.scm.reader.livescanner.sdk.KEvent;
 import com.scm.reader.livescanner.sdk.camera.LegacyCamera;
+import com.scm.reader.livescanner.sdk.recognizers.ZXingRecognizer;
+import com.scm.reader.livescanner.search.ImageRecognizer;
+import com.scm.reader.livescanner.search.ImageScaler;
+import com.scm.reader.livescanner.search.Search;
+import com.scm.reader.livescanner.search.UriImage;
+import com.scm.reader.livescanner.util.LogUtils;
 import com.scm.reader.livescanner.util.Utils;
 import com.scm.shortcutreadersdk.R;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Date;
 
-import static android.graphics.PixelFormat.TRANSLUCENT;
+import static android.graphics.Bitmap.CompressFormat.JPEG;
+import static android.graphics.BitmapFactory.decodeByteArray;
+import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 import static android.view.KeyEvent.KEYCODE_DPAD_CENTER;
+import static android.view.Surface.ROTATION_0;
+import static android.view.Surface.ROTATION_270;
+import static android.view.Surface.ROTATION_90;
 import static android.view.SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS;
-import static android.view.Window.FEATURE_NO_TITLE;
 import static com.scm.reader.livescanner.util.LogUtils.isDebugLog;
 import static com.scm.reader.livescanner.util.LogUtils.logDebug;
-import static com.scm.reader.livescanner.util.Utils.getScreenResolution;
+import static com.scm.reader.livescanner.util.LogUtils.logError;
 
 /**
  * Created by franco on 09/12/14.
@@ -58,15 +76,14 @@ public class CameraView implements SurfaceHolder.Callback {
 
     private LegacyCamera mCamera;
     protected OrientationEventListener orientationListener;
-    private Camera.PictureCallback mPictureCallback;
-
+    private SearchTask mSearchTask;
 
     private static Callbacks sDummyCallbacks = new Callbacks() {
-//        @Override
-//        public void onImageRecognized(KEvent event) {}
+        @Override
+        public void onImageRecognized(KEvent event) {}
 
-//        @Override
-//        public void onImageNotRecognized(KEvent event) {}
+        @Override
+        public void onImageNotRecognized(KEvent event) {}
 
         @Override
         public void onChangeCameraMode() {}
@@ -86,8 +103,8 @@ public class CameraView implements SurfaceHolder.Callback {
     private InfoCallback mInfoCallback = sDummyInfoCallbacks;
 
     public interface Callbacks {
-//        void onImageRecognized(KEvent event);
-//        void onImageNotRecognized(KEvent event);
+        void onImageRecognized(KEvent event);
+        void onImageNotRecognized(KEvent event);
         void onChangeCameraMode();
     }
 
@@ -97,9 +114,8 @@ public class CameraView implements SurfaceHolder.Callback {
     }
 
 
-    public CameraView(Activity holdingActivity, Camera.PictureCallback pictureCallback) {
+    public CameraView(Activity holdingActivity) {
         mHoldingActivity = holdingActivity;
-        mPictureCallback = pictureCallback;
     }
 
     public void onCreate(Bundle savedInstanceState) {
@@ -118,7 +134,7 @@ public class CameraView implements SurfaceHolder.Callback {
         // off screen.
         //cameraManager = new CameraManager(getApplication());
 
-        mCamera = new LegacyCamera(mSurfaceView, mScreenWidth, mScreenHeight, mPictureCallback );
+        mCamera = new LegacyCamera(mSurfaceView, mScreenWidth, mScreenHeight, mJPEGCallback );
 
         showAllViews();
         mCallbacks = (Callbacks) mHoldingActivity;
@@ -280,5 +296,236 @@ public class CameraView implements SurfaceHolder.Callback {
     }
 
 
+    private Camera.PictureCallback mJPEGCallback = new Camera.PictureCallback() {
+
+        @Override
+        public void onPictureTaken(byte[] data, Camera callbackCamera) {
+
+            Uri rawImageURI = mHoldingActivity.getIntent().getParcelableExtra(MediaStore.EXTRA_OUTPUT);
+
+            if (rawImageURI != null) {
+                try {
+                    OutputStream outputStream = mHoldingActivity.getContentResolver().openOutputStream(rawImageURI);
+                    try {
+                        outputStream.write(data);
+                    } finally {
+                        outputStream.close();
+                    }
+
+                    mSearchTask = (SearchTask) new SearchTask(rawImageURI).execute();
+
+                    showSearchScreen();
+                } catch (IOException ex) {
+                    logError("Could not save full sized image to " + rawImageURI, ex);
+                }
+
+            }
+
+        }
+    };
+
+    void showSearchScreen() {
+        View takePictureBar = mHoldingActivity.findViewById(R.id.take_picture_layout);
+        takePictureBar.setVisibility(View.GONE);
+        View cameraUploading = mHoldingActivity.findViewById(R.id.camera_uploading);
+        cameraUploading.setVisibility(View.VISIBLE);
+    }
+
+    void hideSearchScreen() {
+        View takePictureBar = mHoldingActivity.findViewById(R.id.take_picture_layout);
+        takePictureBar.setVisibility(View.VISIBLE);
+        View cameraUploading = mHoldingActivity.findViewById(R.id.camera_uploading);
+        cameraUploading.setVisibility(View.GONE);
+    }
+
+
+    private class SearchTask extends AsyncTask<Void, Void, Search> {
+
+        private Search search;
+        private Object mutex = new Object();
+        private ImageRecognizer imageRecognizer = new ImageRecognizer();
+        private ZXingRecognizer zXingRecognizer = new ZXingRecognizer();
+        private byte[] rawCameraResult;
+        private Uri mRawImageURI;
+
+
+        public SearchTask() {
+
+        }
+
+//        public SearchTask(Search search) {
+//            this.search = search;
+//        }
+
+        public SearchTask(byte[] data) {
+            rawCameraResult = data;
+        }
+
+        public SearchTask(Uri rawImageURI)  {
+            mRawImageURI = rawImageURI;
+        }
+
+        @Override
+        protected Search doInBackground(Void... data) {
+
+            try {
+
+
+                synchronized (mutex) {
+
+                    if (search == null) {
+                        Bitmap img = null;
+
+                        img = scale();
+
+                        img = fixRotation(img);
+// FIXME: here we shoudl show a preview
+//                        showPreview(img);
+                        createAndSaveNewSearch(img);
+                    } else {
+                        if (isDebugLog()) {
+                            logDebug("Resuming " + this.getClass().getSimpleName() + " with " + search);
+                        }
+// FIXME: here we shoudl show a preview
+
+//                        showPreview(search.getImage());
+                    }
+                }
+
+                if (isCancelled()) {
+                    if (isDebugLog()) {
+                        logDebug("Cancelling task after scaling");
+                    }
+                    return null;
+                }
+
+                if (search.isPending() && !executeSearch()) {
+                    return null;
+                }
+
+                if (isCancelled()) {
+                    if (isDebugLog()) {
+                        logDebug("Cancelling task after search");
+                    }
+                    return null;
+                }
+
+                return search;
+            } catch (IOException fnfe) {
+                logError("Exception scaling original image", fnfe);
+                return null;
+            }
+        }
+
+        public void cancel() {
+            logDebug("Cancelling " + this.getClass().getSimpleName());
+            cancel(true);
+            imageRecognizer.cancelRequest();
+        }
+
+        private boolean executeSearch() {
+            if (isDebugLog()) {
+                logDebug("Searching");
+            }
+            try {
+                Search qrSearch = zXingRecognizer.recognize(search.getImage());
+                if(qrSearch.isRecognized()){
+                    //Bitmap thumbnail for barcode
+                    Bitmap barcodeBitmap = BitmapFactory.decodeResource(mHoldingActivity.getBaseContext().getResources(), R.drawable.barcode_thumnbail);
+                    search.modifyToQRSearch(qrSearch, barcodeBitmap);
+                }else{
+                    search = imageRecognizer.query(mHoldingActivity, search);
+                }
+
+            } catch (IOException e) {
+                return false;
+            }
+
+            return true;
+        }
+
+        private Bitmap scale() throws FileNotFoundException {
+            ImageScaler imageScaler = new UriImage(mRawImageURI, mHoldingActivity);
+            return imageScaler.getScaledImage(KConfig.getConfig().getUploadJpegMaxWidthHeight());
+        }
+
+        private Bitmap fixRotation(Bitmap img) throws IOException {
+
+            Display display = ((WindowManager) mHoldingActivity.getSystemService(mHoldingActivity.WINDOW_SERVICE)).getDefaultDisplay();
+
+            if (isDebugLog()) {
+                logDebug("Display orientation is " + display.getOrientation());
+            }
+
+            Matrix m = new Matrix();
+
+            int angle = 0;
+
+            //TODO: refactor
+            if (img.getWidth() > img.getHeight()) {
+                if (display.getOrientation() == ROTATION_0) {
+                    angle = 90;
+                } else if (display.getOrientation() == ROTATION_270) {
+                    angle = 180;
+                }
+            } else {
+                if (display.getOrientation() == ROTATION_90) {
+                    angle = -90;
+                } else if (display.getOrientation() == ROTATION_270) {
+                    angle = 90;
+                }
+            }
+
+            if (isDebugLog()) {
+                logDebug("Preview image will be rotated by " + angle + " degrees");
+            }
+
+            m.postRotate(angle);
+            return Bitmap.createBitmap(img, 0, 0, img.getWidth(), img.getHeight(), m, true);
+        }
+
+        private void createAndSaveNewSearch(Bitmap img) {
+            if (isDebugLog()) {
+                logDebug("Creating and saving new search");
+            }
+            ByteArrayOutputStream imgBytes = new ByteArrayOutputStream();
+            img.compress(JPEG, KConfig.getConfig().getUploadJpegQuality(), imgBytes);
+            search = new Search(mHoldingActivity.getString(R.string.image_not_sent), imgBytes.toByteArray(), new Date(), true);
+/* FIXME
+            if (locationServiceStarted) {
+
+                Location location = serviceConnection.getLocationUpdateService().getCurrentLocation();
+                if (location != null) {
+                    search.setLatitude(location.getLatitude());
+                    search.setLongitude(location.getLongitude());
+                }
+            }
+            databaseAdapter.insertSearch(search);
+            deleteRawCameraResult();
+*/
+        }
+
+        @Override
+        protected void onPostExecute(Search result) {
+            super.onPostExecute(result);
+
+            if (isCancelled()) { return; }
+
+            KEvent event = new KEvent(search);
+
+            if (result != null && result.isRecognized()) {
+                mCallbacks.onImageRecognized(event);
+            } else {
+                hideSearchScreen();
+                mCallbacks.onImageNotRecognized(event);
+            }
+        }
+
+        public Search getSearch() {
+            synchronized (mutex) {
+                return search;
+            }
+        }
+    }
 
 }

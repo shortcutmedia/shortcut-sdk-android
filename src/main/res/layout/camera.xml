@@ -110,5 +110,29 @@
             android:background="@null"/>
         
  	</RelativeLayout>
- 	
+
+    <LinearLayout
+        android:id="@+id/camera_uploading"
+        android:padding="10dp"
+        android:background="#7f000000"
+        android:visibility="gone"
+        android:gravity="bottom" android:layout_height="wrap_content" android:layout_width="fill_parent" android:layout_alignParentBottom="true">
+
+        <ProgressBar
+            android:id="@+id/progress_indeterminate"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:indeterminate="true"
+            android:indeterminateOnly="true"/>
+
+        <TextView
+            android:id="@+id/progress_text"
+            android:layout_width="wrap_content"
+            android:text="@string/searching_loader"
+            android:textColor="#fff"
+            android:textSize="16dp" android:layout_height="fill_parent" android:gravity="center" android:layout_marginBottom="2dp" android:layout_marginLeft="10dp"/>
+
+    </LinearLayout>
+
+
 </RelativeLayout>
