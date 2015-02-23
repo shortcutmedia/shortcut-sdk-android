@@ -57,6 +57,7 @@ public class KConfig {
       requestedMetadata  = "external-references,minimal,extended";
       histogramThreshold = 0.5f;
       server             = "query-api.kooaba.com";
+//      server             = "192.168.0.106:9000";
       port               = 80;
       path               = "/v4/query";
       scale              = 640;

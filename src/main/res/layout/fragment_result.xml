@@ -1,0 +1,31 @@
+<!--
+  ~ Copyright (c) 2015 Shortcut Media AG - All Rights Reserved.
+  ~ Unauthorized copying of this file, via any medium is strictly prohibited
+  ~ Proprietary and confidential
+  -->
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:context="com.scm.reader.resultPage.ui.ItemViewActivity$PlaceholderFragment">
+
+   <WebView
+       android:id="@+id/webView"
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"
+       android:layout_alignParentBottom="true"
+       android:layout_alignParentTop="true">
+
+       </WebView>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:visibility="invisible"
+        android:max="100"
+        android:progressTint="@color/orange"
+        style="?android:attr/progressBarStyleHorizontal"/>
+</RelativeLayout>

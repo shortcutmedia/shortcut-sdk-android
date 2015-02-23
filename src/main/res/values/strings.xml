@@ -1,22 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (c) 2014 Shortcut Media AG - All Rights Reserved.
   ~ Unauthorized copying of this file, via any medium is strictly prohibited
   ~ Proprietary and confidential
-  -->
-
+-->
 <resources>
-    <string name="app_name">Shortcut Reader SDK</string>
 
+    <string name="app_name">Shortcut Reader SDK</string>
     <string name="multiple_matches">Multiple Matches</string>
     <string name="image_not_recognized_title">Unrecognized</string>
     <string name="image_not_sent">Not submitted</string>
     <string name="LiveScannerItemNotRecognizedText">No Results Found</string>
     <string name="searching_loader">Searching</string>
-
-
     <string name="LiveScanningModeStatusTitle">Scanning Mode</string>
     <string name="LiveScanningModeStatusSubtitle">Scan full page, billboard or code</string>
     <string name="SingleShotModeStatusTitle">Snapshot Mode</string>
     <string name="SingleShotModeStatusSubtitle">Capture full page or billboard</string>
+    <string name="title_activity_result">Shortcut</string>
 
 </resources>

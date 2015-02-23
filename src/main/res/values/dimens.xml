@@ -3,12 +3,13 @@
   ~ Copyright (c) 2014 Shortcut Media AG - All Rights Reserved.
   ~ Unauthorized copying of this file, via any medium is strictly prohibited
   ~ Proprietary and confidential
-  -->
-
+-->
 <resources>
 
     <dimen name="bottom_icon_width">126dp</dimen>
     <dimen name="bottom_toolbar">68dp</dimen>
     <dimen name="take_picture_size">60dp</dimen>
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
 
 </resources>

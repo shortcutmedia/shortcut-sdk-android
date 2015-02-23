@@ -1,13 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (c) 2014 Shortcut Media AG - All Rights Reserved.
   ~ Unauthorized copying of this file, via any medium is strictly prohibited
   ~ Proprietary and confidential
-  -->
-
+-->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.scm.shortcutreadersdk">
+    package="com.scm.shortcutreadersdk" >
 
     <application>
+        <activity
+            android:name="com.scm.reader.resultPage.ui.ItemViewActivity"
+            android:label="@string/title_activity_result"
+            android:theme="@style/AppTheme" >
+            <!--android:configChanges="orientation|screenSize|keyboardHidden"-->
+        </activity>
 
     </application>
 
