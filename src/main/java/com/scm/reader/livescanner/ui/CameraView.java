@@ -74,6 +74,7 @@ public class CameraView implements SurfaceHolder.Callback {
     private Activity mHoldingActivity;
     private boolean isInfoViewOpen = false;
     private SurfaceView mSurfaceView;
+    private ImageView mPreviewView;
     private int mScreenWidth;
     private int mScreenHeight;
 
@@ -81,6 +82,7 @@ public class CameraView implements SurfaceHolder.Callback {
     private Uri rawCameraResultUri;
     protected OrientationEventListener orientationListener;
     private SearchTask mSearchTask;
+    private Handler handler = new Handler();
 
     private static Callbacks sDummyCallbacks = new Callbacks() {
         @Override
@@ -213,6 +215,8 @@ public class CameraView implements SurfaceHolder.Callback {
         mSurfaceView.getHolder().addCallback(this);
         mSurfaceView.getHolder().setType(SURFACE_TYPE_PUSH_BUFFERS);
 
+        mPreviewView = (ImageView)  mHoldingActivity.findViewById(R.id.upload_image);
+
 
         final ImageButton infoButton = (ImageButton) mHoldingActivity.findViewById(R.id.info_button);
         infoButton.setImageResource(R.drawable.ibuttonstates);
@@ -306,7 +310,6 @@ public class CameraView implements SurfaceHolder.Callback {
         @Override
         public void onPictureTaken(byte[] data, Camera callbackCamera) {
 
-//            Uri rawImageURI = mHoldingActivity.getIntent().getParcelableExtra(MediaStore.EXTRA_OUTPUT);
             Uri rawImageURI = rawCameraResultUri;
 
             if (rawImageURI != null) {
@@ -320,7 +323,7 @@ public class CameraView implements SurfaceHolder.Callback {
 
                     mSearchTask = (SearchTask) new SearchTask(rawImageURI).execute();
 
-                    showSearchScreen();
+//                    showSearchScreen();
                 } catch (IOException ex) {
                     logError("Could not save full sized image to " + rawImageURI, ex);
                 }
@@ -330,18 +333,40 @@ public class CameraView implements SurfaceHolder.Callback {
         }
     };
 
-    void showSearchScreen() {
-        View takePictureBar = mHoldingActivity.findViewById(R.id.take_picture_layout);
-        takePictureBar.setVisibility(View.GONE);
-        View cameraUploading = mHoldingActivity.findViewById(R.id.camera_uploading);
-        cameraUploading.setVisibility(View.VISIBLE);
+    void showSearchScreen(byte[] img) {
+        showSearchScreen(decodeByteArray(img, 0, img.length));
+    }
+
+    void showSearchScreen(final Bitmap img) {
+        handler.post(new Runnable() {
+            public void run() {
+                View takePictureBar = mHoldingActivity.findViewById(R.id.take_picture_layout);
+                takePictureBar.setVisibility(View.GONE);
+                View cameraUploading = mHoldingActivity.findViewById(R.id.camera_uploading);
+                cameraUploading.setVisibility(View.VISIBLE);
+
+                mPreviewView.setImageBitmap(img);
+                mPreviewView.setVisibility(View.VISIBLE);
+                mSurfaceView.setVisibility(View.GONE);
+            }
+        });
     }
 
     void hideSearchScreen() {
-        View takePictureBar = mHoldingActivity.findViewById(R.id.take_picture_layout);
-        takePictureBar.setVisibility(View.VISIBLE);
-        View cameraUploading = mHoldingActivity.findViewById(R.id.camera_uploading);
-        cameraUploading.setVisibility(View.GONE);
+        handler.post(new Runnable() {
+            public void run() {
+
+                View takePictureBar = mHoldingActivity.findViewById(R.id.take_picture_layout);
+                takePictureBar.setVisibility(View.VISIBLE);
+                View cameraUploading = mHoldingActivity.findViewById(R.id.camera_uploading);
+                cameraUploading.setVisibility(View.GONE);
+
+
+                mPreviewView.setVisibility(View.GONE);
+                mSurfaceView.setVisibility(View.VISIBLE);
+            }
+        });
+
     }
 
     private void startCamera() {
@@ -420,16 +445,14 @@ public class CameraView implements SurfaceHolder.Callback {
                         img = scale();
 
                         img = fixRotation(img);
-// FIXME: here we shoudl show a preview
-//                        showPreview(img);
+
+                        showSearchScreen(img);
                         createAndSaveNewSearch(img);
                     } else {
                         if (isDebugLog()) {
                             logDebug("Resuming " + this.getClass().getSimpleName() + " with " + search);
                         }
-// FIXME: here we shoudl show a preview
-
-//                        showPreview(search.getImage());
+                        showSearchScreen(search.getImage());
                     }
                 }
 
@@ -437,10 +460,12 @@ public class CameraView implements SurfaceHolder.Callback {
                     if (isDebugLog()) {
                         logDebug("Cancelling task after scaling");
                     }
+                    hideSearchScreen();
                     return null;
                 }
 
                 if (search.isPending() && !executeSearch()) {
+                    hideSearchScreen();
                     return null;
                 }
 
@@ -448,12 +473,14 @@ public class CameraView implements SurfaceHolder.Callback {
                     if (isDebugLog()) {
                         logDebug("Cancelling task after search");
                     }
+                    hideSearchScreen();
                     return null;
                 }
 
                 return search;
             } catch (IOException fnfe) {
                 logError("Exception scaling original image", fnfe);
+                hideSearchScreen();
                 return null;
             }
         }
