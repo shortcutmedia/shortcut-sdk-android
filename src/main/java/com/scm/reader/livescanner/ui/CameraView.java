@@ -44,6 +44,7 @@ import com.scm.reader.livescanner.util.Utils;
 import com.scm.shortcutreadersdk.R;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -68,6 +69,8 @@ public class CameraView implements SurfaceHolder.Callback {
 
     public static final String TAG = "com.scm.reader.livescanner.CameraView";
 
+    public static final String TMP_FILE_PREFIX = "ShortcutCamera";
+
     private Activity mHoldingActivity;
     private boolean isInfoViewOpen = false;
     private SurfaceView mSurfaceView;
@@ -75,6 +78,7 @@ public class CameraView implements SurfaceHolder.Callback {
     private int mScreenHeight;
 
     private LegacyCamera mCamera;
+    private Uri rawCameraResultUri;
     protected OrientationEventListener orientationListener;
     private SearchTask mSearchTask;
 
@@ -281,7 +285,8 @@ public class CameraView implements SurfaceHolder.Callback {
                     ", holder surface frame=" + holder.getSurfaceFrame());
         }
 
-        mCamera.startCamera();
+        startCamera();
+
     }
 
     public void setInfoCallback(InfoCallback infoCallback) {
@@ -301,7 +306,8 @@ public class CameraView implements SurfaceHolder.Callback {
         @Override
         public void onPictureTaken(byte[] data, Camera callbackCamera) {
 
-            Uri rawImageURI = mHoldingActivity.getIntent().getParcelableExtra(MediaStore.EXTRA_OUTPUT);
+//            Uri rawImageURI = mHoldingActivity.getIntent().getParcelableExtra(MediaStore.EXTRA_OUTPUT);
+            Uri rawImageURI = rawCameraResultUri;
 
             if (rawImageURI != null) {
                 try {
@@ -337,6 +343,41 @@ public class CameraView implements SurfaceHolder.Callback {
         View cameraUploading = mHoldingActivity.findViewById(R.id.camera_uploading);
         cameraUploading.setVisibility(View.GONE);
     }
+
+    private void startCamera() {
+        if (createCameraResult()) {
+            mCamera.startCamera();
+        }
+    }
+
+    private boolean createCameraResult() {
+        try {
+            rawCameraResultUri = Uri.fromFile(File.createTempFile(TMP_FILE_PREFIX, null));
+        } catch (IOException e) {
+            logError("Could not create temp file", e);
+            return false;
+        }
+
+        return true;
+    }
+
+    private void deleteRawCameraResult() {
+        if (rawCameraResultUri == null) {
+            return;
+        }
+
+        if (isDebugLog()) {
+            logDebug("Removing full sized camera result from " + rawCameraResultUri);
+        }
+
+        File file = new File(rawCameraResultUri.getPath());
+        if (!file.delete()) {
+            Log.i(TAG, "Could not delete file" + rawCameraResultUri.getPath());
+        }
+
+        rawCameraResultUri = null;
+    }
+
 
 
     private class SearchTask extends AsyncTask<Void, Void, Search> {
@@ -503,6 +544,7 @@ public class CameraView implements SurfaceHolder.Callback {
             databaseAdapter.insertSearch(search);
             deleteRawCameraResult();
 */
+            deleteRawCameraResult();
         }
 
         @Override
