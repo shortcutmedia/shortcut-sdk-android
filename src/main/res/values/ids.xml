@@ -1,10 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  ~ Copyright (c) 2014 Shortcut Media AG - All Rights Reserved.
-  ~ Unauthorized copying of this file, via any medium is strictly prohibited
-  ~ Proprietary and confidential
-  -->
-
 <resources>
     <!-- Messages IDs for live-scanner-->
     <item type="id" name="auto_focus"/>
