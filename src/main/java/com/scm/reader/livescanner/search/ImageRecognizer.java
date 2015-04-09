@@ -77,9 +77,11 @@ public class ImageRecognizer {
         apiSecret = bundle.getString(API_SECRET_NAME);
 
       } catch (NameNotFoundException e) {
-          Log.e(TAG, "Failed to load meta-data, NameNotFound: " + e.getMessage());
+        Log.e(TAG, "Failed to load API_KEY or SECRET from meta-data, NameNotFound: " + e.getMessage());
+        throw new RuntimeException("API_KEY or SECRET not found.");
       } catch (NullPointerException e) {
-          Log.e(TAG, "Failed to load meta-data, NullPointer: " + e.getMessage());
+        Log.e(TAG, "Failed to load API_KEY or SECRET from meta-data, NullPointer: " + e.getMessage());
+        throw new RuntimeException("API_KEY or SECRET not found.");
       }
 
       SearchRequestBuilder requestBuilderV4 =
