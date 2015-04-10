@@ -40,7 +40,7 @@ public class ItemViewActivity extends ActionBarActivity implements ItemViewFragm
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         LOGD(TAG, "onCreate");
-        setContentView(R.layout.activity_result);
+        setContentView(R.layout.activity_shortcut_result);
         if (savedInstanceState == null) {
             ItemViewFragment ivf = createFragment();
             ivf.setUserAgentBuilder(this);
