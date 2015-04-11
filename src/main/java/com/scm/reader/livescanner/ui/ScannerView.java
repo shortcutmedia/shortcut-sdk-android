@@ -40,83 +40,44 @@ import com.scm.reader.livescanner.sdk.animation.ScannerAnimation;
 import com.scm.reader.livescanner.util.Utils;
 import com.scm.shortcutreadersdk.R;
 
-public class ScannerView implements KEventListener {
+public class ScannerView extends ShortcutSearchView implements KEventListener {
 
     public static final String TAG = "com.scm.reader.livescanner.ScannerView";
 
-    private Activity mHoldingActivity;
     private Location mLocation;
     private KooabaScanner mScanner;
     private ScannerAnimation mScannerAnimation;
 
     private View mAnimationView;
 
-    private boolean isInfoViewOpen = false;
-
-
-    private static Callbacks sDummyCallbacks = new Callbacks() {
-        @Override
-        public void onImageRecognized(KEvent event) {}
-
-        @Override
-        public void onImageNotRecognized(KEvent event) {}
-
-        @Override
-        public void onChangeCameraMode() {}
-    };
-
-    private Callbacks mCallbacks = sDummyCallbacks;
-
-    private static InfoCallback sDummyInfoCallbacks = new InfoCallback() {
-        @Override
-        public void onInfoViewOpen() {}
-
-        @Override
-        public void onInfoViewClose() {}
-
-    };
-
-    private InfoCallback mInfoCallback = sDummyInfoCallbacks;
-
-    /**
-     * Required interface for hosting activites
-     */
-    public interface Callbacks {
-        void onImageRecognized(KEvent event);
-        void onImageNotRecognized(KEvent event);
-        void onChangeCameraMode();
-    }
-
-    public interface InfoCallback {
-        void onInfoViewOpen();
-        void onInfoViewClose();
+    public ScannerView(Activity holdingActivity) {
+        this(holdingActivity, null);
     }
 
     public ScannerView(Activity holdingActivity, Location location) {
-        mHoldingActivity = holdingActivity;
+        super(holdingActivity);
         mLocation = location;
 
         mScanner = new KooabaScanner(mHoldingActivity, mLocation);
         mScanner.setKEventListener(this);
     }
 
-    // Live cycle methods
-
-    public void onCreate(Bundle savedInstanceState) {
-        initializeWindow();
-    }
-
+    //region LIFECYCLE methods
+    @Override
     public void onResume() {
+        super.onResume();
         startScanner();
-        //animationShown = true;
     }
-
+    @Override
     public void onPause() {
+        super.onPause();
         stopScanner();
-        //animationShown = false;
     }
+    //endregion
 
-    public void initializeWindow() {
+
+
+    protected void initializeWindow() {
         // set up window
 
         WindowManager manager = (WindowManager) mHoldingActivity.getSystemService(Context.WINDOW_SERVICE);
@@ -136,25 +97,7 @@ public class ScannerView implements KEventListener {
         window.addContentView(mAnimationView, new ViewGroup.LayoutParams(screenWidth * 2, screenHeight * 2));
         window.addContentView(bottomBar, new ViewGroup.LayoutParams(screenWidth, screenHeight));
 
-        ImageButton infoButton = (ImageButton) mHoldingActivity.findViewById(R.id.info_button);
-        infoButton.setImageResource(R.drawable.ibuttonstates);
-        infoButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                Log.d(TAG, "InfoButton clicked");
-                if (isInfoViewOpen) {
-                    closeInfoView();
-                } else {
-                    openInfoView();
-                }
-            }
-        });
-
-        ImageButton changeModeBtn = (ImageButton) mHoldingActivity.findViewById(R.id.change_mode_button);
-        changeModeBtn.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                mCallbacks.onChangeCameraMode();
-            }
-        });
+        super.initializeWindow();
 
         // FIXME: where does this belong?
 //        new Thread(new Runnable() {
@@ -182,18 +125,17 @@ public class ScannerView implements KEventListener {
 
     }
 
+
+    @Override
     public void openInfoView() {
-        Log.d(TAG, "open InfoView");
-        mInfoCallback.onInfoViewOpen();
+        super.openInfoView();
         stopScanner();
-        isInfoViewOpen = true;
     }
 
+    @Override
     public void closeInfoView() {
-        Log.d(TAG, "close InfoView");
-        mInfoCallback.onInfoViewClose();
+        super.closeInfoView();
         startScanner();
-        isInfoViewOpen = false;
     }
 
     public void startScanner() {
@@ -209,31 +151,15 @@ public class ScannerView implements KEventListener {
         mScannerAnimation.stop();
     }
 
-    public void onAttach(Activity activity) {
-        mCallbacks = (Callbacks)activity;
-    }
-
-    public void onDetach() {
-        mCallbacks = sDummyCallbacks;
-    }
-
-    public void onStart() {
-        onAttach(mHoldingActivity);
-    }
-
-    public void onStop() {
-        onDetach();
-    }
-
 
     @Override
     public void onImageRecognized(KEvent event) {
-        mCallbacks.onImageRecognized(event);
+        mRecognitionCallbacks.onImageRecognized(event);
     }
 
     @Override
     public void onImageNotRecognized(KEvent event) {
-        mCallbacks.onImageNotRecognized(event);
+        mRecognitionCallbacks.onImageNotRecognized(event);
     }
 
     @Override
@@ -297,10 +223,6 @@ public class ScannerView implements KEventListener {
             });
 
         }
-    }
-
-    public void setInfoCallback(InfoCallback infoCallback) {
-        mInfoCallback = infoCallback;
     }
 
     private void showOverlayToast() {

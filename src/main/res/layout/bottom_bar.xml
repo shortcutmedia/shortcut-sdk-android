@@ -65,7 +65,9 @@
         	android:layout_centerVertical="true"
         	android:layout_alignParentLeft="true"
             android:scaleType="fitCenter"
-        	android:background="@null"/>
+        	android:background="@null"
+            android:visibility="invisible"
+            />
         
  	</RelativeLayout>
 

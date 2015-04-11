@@ -78,14 +78,12 @@ import static com.scm.reader.livescanner.util.LogUtils.logError;
 /**
  * Created by franco on 09/12/14.
  */
-public class CameraView implements SurfaceHolder.Callback {
+public class CameraView extends ShortcutSearchView implements SurfaceHolder.Callback {
 
     public static final String TAG = "com.scm.reader.livescanner.CameraView";
 
     public static final String TMP_FILE_PREFIX = "ShortcutCamera";
 
-    private Activity mHoldingActivity;
-    private boolean isInfoViewOpen = false;
     private SurfaceView mSurfaceView;
     private ImageView mPreviewView;
     private int mScreenWidth;
@@ -97,55 +95,15 @@ public class CameraView implements SurfaceHolder.Callback {
     private SearchTask mSearchTask;
     private Handler handler = new Handler();
 
-    private static Callbacks sDummyCallbacks = new Callbacks() {
-        @Override
-        public void onImageRecognized(KEvent event) {}
-
-        @Override
-        public void onImageNotRecognized(KEvent event) {}
-
-        @Override
-        public void onChangeCameraMode() {}
-    };
-
-    private Callbacks mCallbacks = sDummyCallbacks;
-
-    private static InfoCallback sDummyInfoCallbacks = new InfoCallback() {
-        @Override
-        public void onInfoViewOpen() {}
-
-        @Override
-        public void onInfoViewClose() {}
-
-    };
-
-    private InfoCallback mInfoCallback = sDummyInfoCallbacks;
-
-    public interface Callbacks {
-        void onImageRecognized(KEvent event);
-        void onImageNotRecognized(KEvent event);
-        void onChangeCameraMode();
-    }
-
-    public interface InfoCallback {
-        void onInfoViewOpen();
-        void onInfoViewClose();
-    }
-
 
     public CameraView(Activity holdingActivity) {
-        mHoldingActivity = holdingActivity;
+        super(holdingActivity);
     }
 
-    public void onCreate(Bundle savedInstanceState) {
-
-        initializeWindow();
-
-
-    }
-
+    //region LIFECYCLE methods
+    @Override
     public void onResume() {
-        logDebug("onResume");
+        super.onResume();
 
         // CameraManager must be initialized here, not in onCreate(). This is necessary because we don't
         // want to open the camera driver and measure the screen size if we're going to show the help on
@@ -156,17 +114,20 @@ public class CameraView implements SurfaceHolder.Callback {
         mCamera = new LegacyCamera(mSurfaceView, mScreenWidth, mScreenHeight, mJPEGCallback );
 
         showAllViews();
-        mCallbacks = (Callbacks) mHoldingActivity;
     }
 
+    @Override
     public void onPause() {
+        super.onPause();
         mCamera.stopCamera();
     }
 
+    @Override
     public void onDestroy() {
-        mCallbacks = sDummyCallbacks;
+        super.onDestroy();
         mCamera.onDestroy();
     }
+    //endregion
 
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (!mCamera.isCameraStarted()) {
@@ -202,20 +163,7 @@ public class CameraView implements SurfaceHolder.Callback {
         return false;
     }
 
-    public void openInfoView() {
-        Log.d(TAG, "open InfoView");
-        mInfoCallback.onInfoViewOpen();
-        isInfoViewOpen = true;
-    }
-
-    public void closeInfoView() {
-        Log.d(TAG, "close InfoView");
-        mInfoCallback.onInfoViewClose();
-        isInfoViewOpen = false;
-    }
-
-
-    private void initializeWindow() {
+    protected void initializeWindow() {
 
         WindowManager manager = (WindowManager) mHoldingActivity.getSystemService(Context.WINDOW_SERVICE);
         mScreenWidth = Utils.getScreenResolution(manager).x;
@@ -230,20 +178,6 @@ public class CameraView implements SurfaceHolder.Callback {
 
         mPreviewView = (ImageView)  mHoldingActivity.findViewById(R.id.upload_image);
 
-
-        final ImageButton infoButton = (ImageButton) mHoldingActivity.findViewById(R.id.info_button);
-        infoButton.setImageResource(R.drawable.ibuttonstates);
-        infoButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                Log.d(TAG, "InfoButton clicked");
-                if (isInfoViewOpen) {
-                    closeInfoView();
-                } else {
-                    openInfoView();
-                }
-            }
-        });
-
         final ImageButton button = (ImageButton) mHoldingActivity.findViewById(R.id.take_picture_button);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
@@ -251,13 +185,7 @@ public class CameraView implements SurfaceHolder.Callback {
             }
         });
 
-        //live-scanner button
-        final ImageButton changeModeBtn = (ImageButton) mHoldingActivity.findViewById(R.id.change_mode_button);
-        changeModeBtn.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                mCallbacks.onChangeCameraMode();
-            }
-        });
+        super.initializeWindow();
 
         new Thread(new Runnable() {
             @Override
@@ -304,10 +232,6 @@ public class CameraView implements SurfaceHolder.Callback {
 
         startCamera();
 
-    }
-
-    public void setInfoCallback(InfoCallback infoCallback) {
-        mInfoCallback = infoCallback;
     }
 
     private void showAllViews() {
@@ -596,10 +520,10 @@ public class CameraView implements SurfaceHolder.Callback {
             KEvent event = new KEvent(search);
 
             if (result != null && result.isRecognized()) {
-                mCallbacks.onImageRecognized(event);
+                mRecognitionCallbacks.onImageRecognized(event);
             } else {
                 hideSearchScreen();
-                mCallbacks.onImageNotRecognized(event);
+                mRecognitionCallbacks.onImageNotRecognized(event);
             }
         }
 
