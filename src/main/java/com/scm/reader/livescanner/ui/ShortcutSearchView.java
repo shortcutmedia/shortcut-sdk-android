@@ -20,6 +20,7 @@
 package com.scm.reader.livescanner.ui;
 
 import android.app.Activity;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -36,6 +37,7 @@ public abstract class ShortcutSearchView {
     public static final String TAG = "com.scm.reader.livescanner.ShortcutSearchView";
 
     protected Activity mHoldingActivity;
+    protected Location mLocation;
 
     protected RecognitionCallbacks mRecognitionCallbacks = sDummyRecognitionCallbacks;
     private RecognitionCallbacks mRegisteredRecognitionCallbacks;
@@ -63,9 +65,10 @@ public abstract class ShortcutSearchView {
         void onChangeCameraMode();
     }
 
-    public ShortcutSearchView(Activity holdingActivity) {
+    public ShortcutSearchView(Activity holdingActivity, Location location) {
         mHoldingActivity = holdingActivity;
         mRegisteredRecognitionCallbacks = (RecognitionCallbacks) holdingActivity;
+        mLocation = location;
     }
 
     public void setRecognitionCallbacks(final RecognitionCallbacks callback) {

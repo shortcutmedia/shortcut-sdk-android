@@ -97,7 +97,11 @@ public class CameraView extends ShortcutSearchView implements SurfaceHolder.Call
 
 
     public CameraView(Activity holdingActivity) {
-        super(holdingActivity);
+        this(holdingActivity, null);
+    }
+
+    public CameraView(Activity holdingActivity, Location location) {
+        super(holdingActivity, location);
     }
 
     //region LIFECYCLE methods
@@ -235,7 +239,7 @@ public class CameraView extends ShortcutSearchView implements SurfaceHolder.Call
     }
 
     private void showAllViews() {
-        View instructionsView = (View) mHoldingActivity.findViewById(R.id.take_picture_instructions);
+        View instructionsView = mHoldingActivity.findViewById(R.id.take_picture_instructions);
         instructionsView.setVisibility(View.VISIBLE);
         instructionsView.bringToFront();
         mHoldingActivity.findViewById(R.id.camera_view).setVisibility(View.VISIBLE);
@@ -496,18 +500,11 @@ public class CameraView extends ShortcutSearchView implements SurfaceHolder.Call
             ByteArrayOutputStream imgBytes = new ByteArrayOutputStream();
             img.compress(JPEG, KConfig.getConfig().getUploadJpegQuality(), imgBytes);
             search = new Search(mHoldingActivity.getString(R.string.image_not_sent), imgBytes.toByteArray(), new Date(), true);
-/* FIXME
-            if (locationServiceStarted) {
 
-                Location location = serviceConnection.getLocationUpdateService().getCurrentLocation();
-                if (location != null) {
-                    search.setLatitude(location.getLatitude());
-                    search.setLongitude(location.getLongitude());
-                }
+            if (mLocation != null) {
+                search.setLocation(mLocation);
             }
-            databaseAdapter.insertSearch(search);
-            deleteRawCameraResult();
-*/
+
             deleteRawCameraResult();
         }
 

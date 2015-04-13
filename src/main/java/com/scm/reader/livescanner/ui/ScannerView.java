@@ -22,7 +22,6 @@ package com.scm.reader.livescanner.ui;
 import android.app.Activity;
 import android.content.Context;
 import android.location.Location;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.SurfaceView;
@@ -30,7 +29,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.scm.reader.livescanner.sdk.KEvent;
@@ -44,7 +42,7 @@ public class ScannerView extends ShortcutSearchView implements KEventListener {
 
     public static final String TAG = "com.scm.reader.livescanner.ScannerView";
 
-    private Location mLocation;
+
     private KooabaScanner mScanner;
     private ScannerAnimation mScannerAnimation;
 
@@ -55,9 +53,7 @@ public class ScannerView extends ShortcutSearchView implements KEventListener {
     }
 
     public ScannerView(Activity holdingActivity, Location location) {
-        super(holdingActivity);
-        mLocation = location;
-
+        super(holdingActivity, location);
         mScanner = new KooabaScanner(mHoldingActivity, mLocation);
         mScanner.setKEventListener(this);
     }
@@ -74,7 +70,6 @@ public class ScannerView extends ShortcutSearchView implements KEventListener {
         stopScanner();
     }
     //endregion
-
 
 
     protected void initializeWindow() {

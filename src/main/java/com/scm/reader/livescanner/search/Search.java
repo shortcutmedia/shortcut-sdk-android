@@ -20,6 +20,7 @@
 package com.scm.reader.livescanner.search;
 
 import android.graphics.Bitmap;
+import android.location.Location;
 
 import com.scm.reader.livescanner.sdk.KConfig;
 
@@ -207,6 +208,11 @@ public class Search {
   
   public void setIsQrcode(boolean isQrcode){
 	  this.isQrcode = isQrcode;
+  }
+
+  public void setLocation(final Location location) {
+      setLatitude(location.getLatitude());
+      setLongitude(location.getLongitude());
   }
 
   @Override
