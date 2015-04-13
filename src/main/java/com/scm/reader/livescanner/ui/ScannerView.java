@@ -47,6 +47,7 @@ public class ScannerView extends ShortcutSearchView implements KEventListener {
     private ScannerAnimation mScannerAnimation;
 
     private View mAnimationView;
+    private boolean mWelcomeGone;
 
     public ScannerView(Activity holdingActivity) {
         this(holdingActivity, null);
@@ -94,28 +95,27 @@ public class ScannerView extends ShortcutSearchView implements KEventListener {
 
         super.initializeWindow();
 
-        // FIXME: where does this belong?
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//
-//                try {
-//                    Thread.sleep(9000);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//
-//                ScanActivity.this.runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        welcomeGone=true;
-//                        ScanActivity.this.findViewById(R.id.take_picture_instructions).setVisibility(View.GONE);
-//                    }
-//                });
-//
-//
-//            }
-//        }).start();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(9000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                mHoldingActivity.runOnUiThread(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        mWelcomeGone=true;
+                        mHoldingActivity.findViewById(R.id.take_picture_instructions).setVisibility(View.GONE);
+                    }
+                });
+
+
+            }
+        }).start();
 
 
     }
@@ -174,12 +174,11 @@ public class ScannerView extends ShortcutSearchView implements KEventListener {
             mScannerAnimation.start();
         }
 
-        // FIXME: don't hide the toast if scanner mode indicator is still displayed
-//        if(welcomeGone==true)
-//        {
-
+        // don't hide the toast if scanner mode indicator is still displayed
+        if(mWelcomeGone) {
             hideOverlayToast();
-//        }
+        }
+
     }
 
     @Override
@@ -194,26 +193,6 @@ public class ScannerView extends ShortcutSearchView implements KEventListener {
                     ((TextView) mHoldingActivity.findViewById(R.id.modename)).setText(R.string.LiveScannerItemNotRecognizedText);
                     mHoldingActivity.findViewById(R.id.modedetails).setVisibility(View.GONE);
                     showOverlayToast();
-
-
-                    // FIXME: Don't understand what effect this code has?
-//                    new Thread(new Runnable() {
-//                      @Override
-//                      public void run() {
-//                          try {
-//                              Thread.sleep(15000);
-//                          } catch (InterruptedException e) {
-//                              e.printStackTrace();
-//                          }
-//                          mHoldingActivity.runOnUiThread(new Runnable() {
-//                              @Override
-//                              public void run() {
-//                                  mHoldingActivity.findViewById(R.id.take_picture_instructions).setVisibility(View.VISIBLE);
-//                              }
-//                          });
-//                      }
-//                  }).start();
-
                 }
             });
 

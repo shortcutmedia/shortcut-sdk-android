@@ -360,9 +360,9 @@ public class CameraView extends ShortcutSearchView implements SurfaceHolder.Call
 
         }
 
-//        public SearchTask(Search search) {
-//            this.search = search;
-//        }
+        public SearchTask(Search search) {
+            this.search = search;
+        }
 
         public SearchTask(byte[] data) {
             rawCameraResult = data;

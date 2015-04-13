@@ -68,7 +68,7 @@ public class LegacyCamera {
 
     public LegacyCamera(SurfaceView surfaceView, int surfaceWidth, int surfaceHeight, Camera.PictureCallback callback) {
         mSurfaceView = surfaceView;
-        mSurfaceWidth = surfaceWidth;// FIXME: can't we take the width and height from the surfaceView?
+        mSurfaceWidth = surfaceWidth;
         mSurfaceHeight = surfaceHeight;
         mPictureCallback = callback;
 
