@@ -2,7 +2,7 @@
 
 # Overview
 
-This SDK provides basically two components that allow to interact with the Shortcut Image Recognition Service:
+This SDK provides two components that allow to interact with the Shortcut Image Recognition Service:
 - The first component consists of two classes, `CameraView` and `ScannerView`, which are using the camera to 
 campture image data which then is submitted to the image recognition service. 
 It reports image recognition results back to you. 
