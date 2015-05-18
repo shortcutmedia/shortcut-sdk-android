@@ -23,19 +23,20 @@ There is also an [iOS version of the Shortcut SDK](https://github.com/shortcutme
 
 See the instructions bellow how to integrate the SDK into your project. 
 
-1. Checkout the latest source code of the SDK from [github](https://github.com/shortcutmedia/shortcut-sdk-android) to a temporary directory.
-2. In Android Studio select menu 'File' > 'Import Module...' and select
-   the path to the downloaded files. 
+1. Checkout the latest source code of the SDK from [github](https://github.com/shortcutmedia/shortcut-sdk-android) to a temporary directory or download the latest version of the source code from the [release page](https://github.com/shortcutmedia/shortcut-sdk-android/releases).
+2. In Android Studio open the project you would like the integrate the SDK or create a new empty project.
+2. In Android Studio select menu 'File' > 'New', 'Import Module...' and select
+   the path to the downloaded directory. 
 3. Make the SDK classes available to the newly created project. Open 'File' >
    'Project Structure' and select module 'app'. Switch to tab
-'Dependencies' and add _shortcutReaderSDK_ as a "Module Dependency".
+'Dependencies' and add _shortcutReaderSDK_ as a new "Module Dependency".
 4. [Request the demo keys](http://shortcutmedia.com/request_demo_keys.html) and add the declaration to your project's _Manifest.xml_ file. We will immediately send you an email with the keys.
 
 ```xml
 <manifest ... >
   <application ... >
-    <meta-data android:name="com.shortcutmedia.shortcut.sdk.API_KEY" android:value="677795eb-4fba-4797-963d-2e455f7d08f6"/>
-    <meta-data android:name="com.shortcutmedia.shortcut.sdk.API_SECRET" android:value="4NoTXkiaw4mLze0irkTuIg0KDj7D73er6v4lTvEm"/>
+    <meta-data android:name="com.shortcutmedia.shortcut.sdk.API_KEY" android:value="<DEMO_API_KEY>"/>
+    <meta-data android:name="com.shortcutmedia.shortcut.sdk.API_SECRET" android:value="<DEMO_API_SECRET>"/>
   </application>
 <manifest>
 ```
