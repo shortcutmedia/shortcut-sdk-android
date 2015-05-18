@@ -29,9 +29,7 @@ See the instructions bellow how to integrate the SDK into your project.
 3. Make the SDK classes available to the newly created project. Open 'File' >
    'Project Structure' and select module 'app'. Switch to tab
 'Dependencies' and add _shortcutReaderSDK_ as a "Module Dependency".
-4. Add the api-key and api-secret declaration to your project's _Manifest.xml_ file. For
-   your first test you can use the predefined keys from the example. If you like to test
-with your own items please request individual keys by sending us an email to support@shortcutmedia.com.
+4. [Request the demo keys](http://shortcutmedia.com/request_demo_keys.html) and add the declaration to your project's _Manifest.xml_ file. We will immediately send you an email with the keys.
 
 ```xml
 <manifest ... >
@@ -59,7 +57,7 @@ To get a feeling for the different parts of the SDK this section walks you throu
 
 First, we have to create a new project in Android Studio. Select the most basic of the available templates (this would be a *Blank Activity* template ) and name it CameraActivity. You will not the generated layout file "activity_camera.xml" therefore you can safely delete it.  Then follow the steps in the Installation section above to add the SDK code to your project.
 
-You also need access keys, at the moment you have to request them by sending a mail to support@shortcutmedia.com.
+**You need access keys**. [Request the demo keys](http://shortcutmedia.com/request_demo_keys.html). We will immediately send you an email with the keys. These keys will allow you to scan the [Lenna test image](https://en.wikipedia.org/wiki/Lenna). If you plan to upload your own images, send an email to support@shortcutmedia.com to request your individual keys.
 
 We want to display a Camera view as soon as the app starts; so let's implement the CameraActivity and make the following changes:
 
