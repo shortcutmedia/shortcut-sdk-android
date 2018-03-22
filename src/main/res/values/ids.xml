@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Messages IDs for live-scanner-->
-    <item type="id" name="auto_focus"/>
-    <item type="id" name="recognize"/>
-    <item type="id" name="recognize_qr_only"/>
-    <item type="id" name="recognition_failed"/>
-    <item type="id" name="recognition_succeeded"/>
-    <item type="id" name="recognition_error"/>
-    <item type="id" name="recognition_info"/>
-    <item type="id" name="restart_recognition" />
-    <item type="id" name="continue_kooaba_recognition"/>
-    <item type="id" name="pause_kooaba_recognition"/>
-    <item type="id" name="stop_scanning"/>
+    <item type="id" name="shortcut_sdk_auto_focus"/>
+    <item type="id" name="shortcut_sdk_recognize"/>
+    <item type="id" name="shortcut_sdk_recognize_qr_only"/>
+    <item type="id" name="shortcut_sdk_recognition_failed"/>
+    <item type="id" name="shortcut_sdk_recognition_succeeded"/>
+    <item type="id" name="shortcut_sdk_recognition_error"/>
+    <item type="id" name="shortcut_sdk_recognition_info"/>
+    <item type="id" name="shortcut_sdk_restart_recognition" />
+    <item type="id" name="shortcut_sdk_continue_kooaba_recognition"/>
+    <item type="id" name="shortcut_sdk_pause_kooaba_recognition"/>
+    <item type="id" name="shortcut_sdk_stop_scanning"/>
 </resources>

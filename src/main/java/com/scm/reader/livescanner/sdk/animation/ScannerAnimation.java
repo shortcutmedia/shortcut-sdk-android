@@ -53,7 +53,7 @@ public class ScannerAnimation {
 	    screenWidth = Utils.getScreenResolution(manager).x;
 	    screenHeight = Utils.getScreenResolution(manager).y;
 
-		bottomBarHeight = activity.getResources().getDimensionPixelSize(R.dimen.bottom_toolbar);
+		bottomBarHeight = activity.getResources().getDimensionPixelSize(R.dimen.shortcut_sdk_bottom_toolbar);
 		Log.d("Animation", bottomBarHeight +"");
 		ta = new TranslateAnimation(-screenWidth,  0, -screenHeight, -bottomBarHeight);
 		ta.initialize(screenWidth*2, screenHeight*2, screenWidth*2, screenHeight*2);

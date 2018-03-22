@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Shortcut Reader SDK</string>
-    <string name="multiple_matches">Multiple Matches</string>
-    <string name="image_not_recognized_title">Unrecognized</string>
-    <string name="image_not_sent">Not submitted</string>
-    <string name="LiveScannerItemNotRecognizedText">No Results Found</string>
-    <string name="searching_loader">Searching</string>
-    <string name="LiveScanningModeStatusTitle">Scanning Mode</string>
-    <string name="LiveScanningModeStatusSubtitle">Scan full page, billboard or code</string>
-    <string name="SingleShotModeStatusTitle">Snapshot Mode</string>
-    <string name="SingleShotModeStatusSubtitle">Capture full page or billboard</string>
-    <string name="title_activity_result">Shortcut</string>
+    <string name="shortcut_sdk_app_name">Shortcut Reader SDK</string>
+    <string name="shortcut_sdk_multiple_matches">Multiple Matches</string>
+    <string name="shortcut_sdk_image_not_recognized_title">Unrecognized</string>
+    <string name="shortcut_sdk_image_not_sent">Not submitted</string>
+    <string name="shortcut_sdk_LiveScannerItemNotRecognizedText">No Results Found</string>
+    <string name="shortcut_sdk_searching_loader">Searching</string>
+    <string name="shortcut_sdk_LiveScanningModeStatusTitle">Scanning Mode</string>
+    <string name="shortcut_sdk_LiveScanningModeStatusSubtitle">Scan full page, billboard or code</string>
+    <string name="shortcut_sdk_SingleShotModeStatusTitle">Snapshot Mode</string>
+    <string name="shortcut_sdk_SingleShotModeStatusSubtitle">Capture full page or billboard</string>
+    <string name="shortcut_sdk_title_activity_result">Shortcut</string>
 
 </resources>

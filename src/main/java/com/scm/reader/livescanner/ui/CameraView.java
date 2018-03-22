@@ -174,7 +174,7 @@ public class CameraView extends ShortcutSearchView implements SurfaceHolder.Call
         mScreenHeight = Utils.getScreenResolution(manager).y;
 
         LayoutInflater inflater = mHoldingActivity.getLayoutInflater();
-        mHoldingActivity.setContentView(R.layout.camera);
+        mHoldingActivity.setContentView(R.layout.shortcut_sdk_camera);
 
         mSurfaceView = (SurfaceView) mHoldingActivity.findViewById(R.id.camerasurface);
         mSurfaceView.getHolder().addCallback(this);
@@ -440,7 +440,7 @@ public class CameraView extends ShortcutSearchView implements SurfaceHolder.Call
                 Search qrSearch = zXingRecognizer.recognize(search.getImage());
                 if(qrSearch.isRecognized()){
                     //Bitmap thumbnail for barcode
-                    Bitmap barcodeBitmap = BitmapFactory.decodeResource(mHoldingActivity.getBaseContext().getResources(), R.drawable.barcode_thumnbail);
+                    Bitmap barcodeBitmap = BitmapFactory.decodeResource(mHoldingActivity.getBaseContext().getResources(), R.drawable.shortcut_sdk_barcode_thumnbail);
                     search.modifyToQRSearch(qrSearch, barcodeBitmap);
                 }else{
                     search = imageRecognizer.query(mHoldingActivity, search);
@@ -499,7 +499,7 @@ public class CameraView extends ShortcutSearchView implements SurfaceHolder.Call
             }
             ByteArrayOutputStream imgBytes = new ByteArrayOutputStream();
             img.compress(JPEG, KConfig.getConfig().getUploadJpegQuality(), imgBytes);
-            search = new Search(mHoldingActivity.getString(R.string.image_not_sent), imgBytes.toByteArray(), new Date(), true);
+            search = new Search(mHoldingActivity.getString(R.string.shortcut_sdk_image_not_sent), imgBytes.toByteArray(), new Date(), true);
 
             if (mLocation != null) {
                 search.setLocation(mLocation);

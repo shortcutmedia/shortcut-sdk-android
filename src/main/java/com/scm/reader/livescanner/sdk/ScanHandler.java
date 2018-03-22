@@ -71,51 +71,51 @@ public class ScanHandler extends Handler {
    */
   @Override
   public void handleMessage(Message message) {
-    if (message.what == R.id.auto_focus) {
+    if (message.what == R.id.shortcut_sdk_auto_focus) {
         // When one auto focus pass finishes, start another -> continuous AF.
         if (state == State.PREVIEW) {
-            cameraManager.requestAutoFocus(this, R.id.auto_focus);
+            cameraManager.requestAutoFocus(this, R.id.shortcut_sdk_auto_focus);
         }
-    } else if (message.what == R.id.restart_recognition) {
+    } else if (message.what == R.id.shortcut_sdk_restart_recognition) {
         restartPreviewAndRecognize();
         Log.d(TAG, "RECEIVED restart recognition. Trying to recognize");
-    } else if (message.what == R.id.continue_kooaba_recognition) {
+    } else if (message.what == R.id.shortcut_sdk_continue_kooaba_recognition) {
         Log.d(TAG, "RECEIVED continue kooaba recognition");
-        cameraManager.requestPreviewFrame(queryThread.getHandler(), R.id.recognize);
+        cameraManager.requestPreviewFrame(queryThread.getHandler(), R.id.shortcut_sdk_recognize);
         kEventListener.onContinueKooabaRecognition((String) message.obj);
-    } else if (message.what == R.id.pause_kooaba_recognition) {
+    } else if (message.what == R.id.shortcut_sdk_pause_kooaba_recognition) {
         Log.d(TAG, "RECEIVED continue kooaba recognition");
-        cameraManager.requestPreviewFrame(queryThread.getHandler(), R.id.recognize_qr_only);
+        cameraManager.requestPreviewFrame(queryThread.getHandler(), R.id.shortcut_sdk_recognize_qr_only);
         kEventListener.onPauseKooabaRecognition((String) message.obj);
-    } else if (message.what == R.id.recognition_succeeded) {
+    } else if (message.what == R.id.shortcut_sdk_recognition_succeeded) {
         state = State.SUCCESS;
         Log.d(TAG, "RECEIVED recognition succeeded; Should stop!");
         kEventListener.onImageRecognized((KEvent) message.obj);
-    } else if (message.what == R.id.recognition_failed) {
+    } else if (message.what == R.id.shortcut_sdk_recognition_failed) {
         // Decode as fast as possible, so when one decode fails, start another.
         Log.d(TAG, "RECEIVED recognition failed; Trying again");
         state = State.PREVIEW;
-        cameraManager.requestPreviewFrame(queryThread.getHandler(), R.id.recognize);
+        cameraManager.requestPreviewFrame(queryThread.getHandler(), R.id.shortcut_sdk_recognize);
         //cameraManager.requestPreviewFrame(queryThread.getHandler(), R.id.recognize_qr_only);
         kEventListener.onImageNotRecognized((KEvent) message.obj);
-    } else if (message.what == R.id.recognition_info) {
+    } else if (message.what == R.id.shortcut_sdk_recognition_info) {
         Log.d(TAG, "RECEIVED recognition info; Trying again");
         kEventListener.onInfo((String) message.obj);
         if (state == State.PREVIEW) {
-            cameraManager.requestPreviewFrame(queryThread.getHandler(), R.id.recognize);
+            cameraManager.requestPreviewFrame(queryThread.getHandler(), R.id.shortcut_sdk_recognize);
         }
-    } else if (message.what == R.id.recognition_error) {
+    } else if (message.what == R.id.shortcut_sdk_recognition_error) {
         Log.d(TAG, "RECEIVED recognition error: Should stop!");
         kEventListener.onError((Exception) message.obj);
-        cameraManager.requestPreviewFrame(queryThread.getHandler(), R.id.recognize);
+        cameraManager.requestPreviewFrame(queryThread.getHandler(), R.id.shortcut_sdk_recognize);
     }
   }
 
   private void restartPreviewAndRecognize() {
     if (state == State.SUCCESS) {
       state = State.PREVIEW;
-      cameraManager.requestPreviewFrame(queryThread.getHandler(), R.id.recognize);
-      cameraManager.requestAutoFocus(this, R.id.auto_focus);
+      cameraManager.requestPreviewFrame(queryThread.getHandler(), R.id.shortcut_sdk_recognize);
+      cameraManager.requestAutoFocus(this, R.id.shortcut_sdk_auto_focus);
     }
   }
 
@@ -125,7 +125,7 @@ public class ScanHandler extends Handler {
   public void quitSynchronously() {
     state = State.FINISHED;
     cameraManager.stopPreview();
-    Message quit = Message.obtain(queryThread.getHandler(), R.id.stop_scanning);
+    Message quit = Message.obtain(queryThread.getHandler(), R.id.shortcut_sdk_stop_scanning);
     quit.sendToTarget();
     try {
       // Wait at most half a second; should be enough time, and onPause() will timeout quickly
@@ -135,8 +135,8 @@ public class ScanHandler extends Handler {
     }
     Log.d(TAG, "The thread should have finished");
     // Be absolutely sure we don't send any queued up messages
-    removeMessages(R.id.recognition_failed);
-    removeMessages(R.id.recognition_succeeded);
+    removeMessages(R.id.shortcut_sdk_recognition_failed);
+    removeMessages(R.id.shortcut_sdk_recognition_succeeded);
   }
 
   public CameraManager getCameraManager() {

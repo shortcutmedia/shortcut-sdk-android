@@ -388,7 +388,7 @@ public class LegacyCamera {
 
             try {
                 clickSound = new MediaPlayer();
-                AssetFileDescriptor afd = mSurfaceView.getContext().getResources().openRawResourceFd(R.raw.camera_click);
+                AssetFileDescriptor afd = mSurfaceView.getContext().getResources().openRawResourceFd(R.raw.shortcut_sdk_camera_click);
                 if (clickSound != null) {
                     clickSound.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
                     clickSound.setAudioStreamType(STREAM_SYSTEM);

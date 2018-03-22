@@ -39,6 +39,7 @@ android {
         }
     }
     useLibrary 'org.apache.http.legacy'
+    resourcePrefix "shortcut_sdk_"
 }
 
 dependencies {

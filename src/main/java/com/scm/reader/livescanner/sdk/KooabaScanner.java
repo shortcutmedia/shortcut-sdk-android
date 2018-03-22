@@ -156,7 +156,7 @@ public class KooabaScanner implements SurfaceHolder.Callback {
 
   public void resume() {
     if (scanHandler != null) {
-      Message msg = Message.obtain(scanHandler, R.id.restart_recognition);
+      Message msg = Message.obtain(scanHandler, R.id.shortcut_sdk_restart_recognition);
       msg.sendToTarget();
     }
   }

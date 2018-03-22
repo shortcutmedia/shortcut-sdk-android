@@ -34,7 +34,7 @@ import com.scm.shortcutreadersdk.R;
  */
 public abstract class ShortcutSearchView {
 
-    public static final String TAG = "com.scm.reader.livescanner.ShortcutSearchView";
+    public static final String TAG = "ShortcutSearchView";
 
     protected Activity mHoldingActivity;
     protected Location mLocation;
@@ -116,7 +116,7 @@ public abstract class ShortcutSearchView {
     protected void initializeButtomBar() {
 
         final ImageButton infoButton = getButton(R.id.info_button);
-        infoButton.setImageResource(R.drawable.ibuttonstates);
+        infoButton.setImageResource(R.drawable.shortcut_sdk_ibuttonstates);
         infoButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 Log.d(TAG, "InfoButton clicked");

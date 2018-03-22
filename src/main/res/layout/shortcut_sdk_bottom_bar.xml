@@ -25,10 +25,10 @@
     <RelativeLayout
         android:id="@+id/take_picture_layout"
         android:layout_width="fill_parent"
-        android:layout_height="@dimen/bottom_toolbar"
+        android:layout_height="@dimen/shortcut_sdk_bottom_toolbar"
         android:layout_alignParentBottom="true"
         android:layout_centerVertical="true"
-        android:background="@drawable/bottom_bar_landscape"
+        android:background="@drawable/shortcut_sdk_bottom_bar_landscape"
         android:orientation="vertical"
         android:padding="0dp"
         >
@@ -41,10 +41,10 @@
             android:id="@+id/layoutToInflateButtons">
         <ImageButton
             android:id="@+id/change_mode_button"
-            android:background="@drawable/button_in_video_mode"
+            android:background="@drawable/shortcut_sdk_button_in_video_mode"
 
-            android:layout_height="@dimen/bottom_toolbar"
-            android:layout_width="@dimen/bottom_icon_width"
+            android:layout_height="@dimen/shortcut_sdk_bottom_toolbar"
+            android:layout_width="@dimen/shortcut_sdk_bottom_icon_width"
 
             android:padding="0dp"
             android:layout_centerVertical="true"
@@ -59,8 +59,8 @@
 
         <ImageButton 
             android:id="@+id/info_button"
-            android:layout_height="@dimen/bottom_toolbar"
-            android:layout_width="@dimen/bottom_toolbar"
+            android:layout_height="@dimen/shortcut_sdk_bottom_toolbar"
+            android:layout_width="@dimen/shortcut_sdk_bottom_toolbar"
             android:padding="10dp"
         	android:layout_centerVertical="true"
         	android:layout_alignParentLeft="true"

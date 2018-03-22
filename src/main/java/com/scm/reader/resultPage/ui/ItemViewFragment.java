@@ -60,7 +60,7 @@ public class ItemViewFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        final View v = inflater.inflate(R.layout.fragment_result, container, false);
+        final View v = inflater.inflate(R.layout.shortcut_sdk_fragment_result, container, false);
 
         mWebView = (WebView)v.findViewById(R.id.webView);
 

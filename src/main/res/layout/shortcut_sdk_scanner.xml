@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/camera_view"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:gravity="bottom"
+    android:orientation="vertical">
+
+    <SurfaceView
+        android:id="@+id/camerasurface"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_toLeftOf="@+id/take_picture_layout" />
+
+    <RelativeLayout
+        android:id="@+id/info_button_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="horizontal"
+        android:scaleType="fitCenter" />
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="#00000000" />
+
+
+    <RelativeLayout
+        android:id="@+id/take_picture_instructions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_margin="20dp"
+        android:background="@drawable/shortcut_sdk_instructionbackground"
+        android:gravity="top"
+        android:orientation="horizontal"
+        android:padding="20dp">
+
+        <TextView
+            android:id="@+id/modename"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            android:padding="4dp"
+            android:paddingBottom="0dp"
+            android:text="@string/shortcut_sdk_LiveScanningModeStatusTitle"
+            android:textColor="@color/shortcut_sdk_white"
+            android:textSize="20dp" />
+
+        <TextView
+            android:id="@+id/modedetails"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/modename"
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            android:padding="4dp"
+            android:text="@string/shortcut_sdk_LiveScanningModeStatusSubtitle"
+            android:textColor="@color/shortcut_sdk_white"
+            android:textSize="16dp" />
+
+    </RelativeLayout>
+</RelativeLayout>

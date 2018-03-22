@@ -107,7 +107,7 @@ public class QueryHandler extends Handler {
     }
     Log.d(TAG, "Device is not moving");
     
-    if (message.what == R.id.recognize) {
+    if (message.what == R.id.shortcut_sdk_recognize) {
       Log.d(TAG, "Received message 'RECOGNiZE'. Proceed");
 
       int width    = message.arg1;
@@ -119,7 +119,7 @@ public class QueryHandler extends Handler {
         Search searchResult = null;
         
         //send thumbnail picture for zXing
-        Bitmap barcodeBitmap = BitmapFactory.decodeResource(scanHandler.getContext().getResources(), R.drawable.barcode_thumnbail);
+        Bitmap barcodeBitmap = BitmapFactory.decodeResource(scanHandler.getContext().getResources(), R.drawable.shortcut_sdk_barcode_thumnbail);
         
         // try to recognize with ZXing
         searchResult = zXingRecognizer.recognize(image, width, height, barcodeBitmap);
@@ -147,7 +147,7 @@ public class QueryHandler extends Handler {
         e.printStackTrace();
       }
 
-    } else if (message.what == R.id.recognize_qr_only){
+    } else if (message.what == R.id.shortcut_sdk_recognize_qr_only){
     	Log.d(TAG, "Received message 'RECOGNiZE QR ONLY'. Proceed");
 
         int width    = message.arg1;
@@ -157,7 +157,7 @@ public class QueryHandler extends Handler {
         Search searchResult = null;
         
         //send thumbnail picture for zXing
-        Bitmap barcodeBitmap = BitmapFactory.decodeResource(scanHandler.getContext().getResources(), R.drawable.barcode_thumnbail);
+        Bitmap barcodeBitmap = BitmapFactory.decodeResource(scanHandler.getContext().getResources(), R.drawable.shortcut_sdk_barcode_thumnbail);
         
         // try to recognize with ZXing
         searchResult = zXingRecognizer.recognize(image, width, height, barcodeBitmap);
@@ -175,7 +175,7 @@ public class QueryHandler extends Handler {
         	
        
     	
-    }else if (message.what == R.id.stop_scanning) {
+    }else if (message.what == R.id.shortcut_sdk_stop_scanning) {
       accelerationListener.unregister();
       running = false;
       Looper.myLooper().quit();
@@ -195,7 +195,7 @@ public class QueryHandler extends Handler {
    */
   public void replyWithInfo(String info) {
     if (scanHandler != null) {
-      Message message = Message.obtain(scanHandler, R.id.recognition_info);
+      Message message = Message.obtain(scanHandler, R.id.shortcut_sdk_recognition_info);
       message.obj = info;
       message.sendToTarget();
       Log.d(TAG, "Replying with info");
@@ -209,7 +209,7 @@ public class QueryHandler extends Handler {
   
   public void replyWithError(Exception e) {
     if (scanHandler != null) {
-      Message message = Message.obtain(scanHandler, R.id.recognition_error);
+      Message message = Message.obtain(scanHandler, R.id.shortcut_sdk_recognition_error);
       message.obj = e;
       message.sendToTarget();
       Log.e(TAG, "Error: " + e.getClass().getSimpleName() + ": " + e.getMessage());
@@ -223,7 +223,7 @@ public class QueryHandler extends Handler {
    */
   public void replyWithRecognitionSucceeded(KEvent event) {
     if (scanHandler != null) {
-      Message message = Message.obtain(scanHandler, R.id.recognition_succeeded);
+      Message message = Message.obtain(scanHandler, R.id.shortcut_sdk_recognition_succeeded);
       message.obj = event;
       message.sendToTarget();
       Log.d(TAG, "Recognition succeeded: " + event.getSearch().getTitle());
@@ -236,7 +236,7 @@ public class QueryHandler extends Handler {
    */
   public void replyWithRecognitionFailed(KEvent event) {
     if (scanHandler != null) {
-      Message message = Message.obtain(scanHandler, R.id.recognition_failed);
+      Message message = Message.obtain(scanHandler, R.id.shortcut_sdk_recognition_failed);
       message.obj = event;
       message.sendToTarget();
       Log.d(TAG, "Recognition failed");
@@ -245,7 +245,7 @@ public class QueryHandler extends Handler {
   
   public void pauseKooabaRecognition(String info){
 	  if (scanHandler != null) {
-	      Message message = Message.obtain(scanHandler, R.id.pause_kooaba_recognition);
+	      Message message = Message.obtain(scanHandler, R.id.shortcut_sdk_pause_kooaba_recognition);
 	      message.obj = info;
 	      message.sendToTarget();
 	      Log.d(TAG, "Pause Kooaba recognition");
@@ -254,7 +254,7 @@ public class QueryHandler extends Handler {
   
   public void continueKooabaRecognition(String info){
 	  if (scanHandler != null) {
-	      Message message = Message.obtain(scanHandler, R.id.continue_kooaba_recognition);
+	      Message message = Message.obtain(scanHandler, R.id.shortcut_sdk_continue_kooaba_recognition);
 	      message.obj = info;
 	      message.sendToTarget();
 	      Log.d(TAG, "Continue Kooaba recognition");

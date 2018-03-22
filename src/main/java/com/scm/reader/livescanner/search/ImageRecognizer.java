@@ -194,7 +194,7 @@ public class ImageRecognizer {
 	//no results
 	if(resultArray.length() == 0){
 		dataToPopulate.setRecognized(false);
-        dataToPopulate.setTitle(context.getResources().getString(R.string.image_not_recognized_title));
+        dataToPopulate.setTitle(context.getResources().getString(R.string.shortcut_sdk_image_not_recognized_title));
         dataToPopulate.setUrl("http://");
 	}
 	
@@ -275,7 +275,7 @@ public class ImageRecognizer {
 			JSONArray metaDataArray = result.getJSONArray("metadata");
 			JSONObject metaDataObj = metaDataArray.getJSONObject(0);
 			
-			dataToPopulate.setTitle(context.getResources().getString(R.string.multiple_matches));
+			dataToPopulate.setTitle(context.getResources().getString(R.string.shortcut_sdk_multiple_matches));
 				if(dataToPopulate.hasSections()){
 					//checking that there is no two of same headers
 

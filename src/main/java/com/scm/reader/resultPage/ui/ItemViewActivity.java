@@ -39,7 +39,7 @@ public class ItemViewActivity extends AppCompatActivity implements ItemViewFragm
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         LOGD(TAG, "onCreate");
-        setContentView(R.layout.activity_shortcut_result);
+        setContentView(R.layout.shortcut_sdk_activity_shortcut_result);
         if (savedInstanceState == null) {
             ItemViewFragment ivf = createFragment();
             ivf.setUserAgentBuilder(this);

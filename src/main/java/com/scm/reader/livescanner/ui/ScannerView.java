@@ -81,9 +81,9 @@ public class ScannerView extends ShortcutSearchView implements KEventListener {
         int screenHeight = Utils.getScreenResolution(manager).y;
 
         LayoutInflater inflater = mHoldingActivity.getLayoutInflater();
-        mAnimationView = inflater.inflate(R.layout.scanner_animation, null);
-        View scannerView = inflater.inflate(R.layout.scanner, null);
-        View bottomBar = inflater.inflate(R.layout.bottom_bar, null);
+        mAnimationView = inflater.inflate(R.layout.shortcut_sdk_scanner_animation, null);
+        View scannerView = inflater.inflate(R.layout.shortcut_sdk_scanner, null);
+        View bottomBar = inflater.inflate(R.layout.shortcut_sdk_bottom_bar, null);
 
         mScannerAnimation = new ScannerAnimation(mHoldingActivity, mAnimationView);
 
@@ -190,7 +190,7 @@ public class ScannerView extends ShortcutSearchView implements KEventListener {
             mHoldingActivity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    ((TextView) mHoldingActivity.findViewById(R.id.modename)).setText(R.string.LiveScannerItemNotRecognizedText);
+                    ((TextView) mHoldingActivity.findViewById(R.id.modename)).setText(R.string.shortcut_sdk_LiveScannerItemNotRecognizedText);
                     mHoldingActivity.findViewById(R.id.modedetails).setVisibility(View.GONE);
                     showOverlayToast();
                 }

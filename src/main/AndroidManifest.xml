@@ -16,9 +16,8 @@
     <application>
         <activity
             android:name="com.scm.reader.resultPage.ui.ItemViewActivity"
-            android:label="@string/title_activity_result"
-            android:theme="@style/AppTheme" >
-            <!--android:configChanges="orientation|screenSize|keyboardHidden"-->
+            android:label="@string/shortcut_sdk_title_activity_result"
+            android:theme="@style/shortcut_sdk_AppTheme" >
         </activity>
 
     </application>

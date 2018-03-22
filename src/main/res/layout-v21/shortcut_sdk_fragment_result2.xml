@@ -18,50 +18,31 @@
   -->
 
 
-
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                    xmlns:tools="http://schemas.android.com/tools"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    tools:context="com.scm.reader.resultPage.ui.ItemViewActivity$PlaceholderFragment">
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context="com.scm.reader.resultPage.ui.ItemViewActivity$PlaceholderFragment">
 
-       <WebView
-           android:id="@+id/webView"
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content"
-           android:layout_alignParentBottom="true"
-           android:layout_alignParentTop="true">
-
-           </WebView>
+        <WebView
+            android:id="@+id/webView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentTop="true" />
 
         <ProgressBar
             android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:visibility="invisible"
-            style="?android:attr/progressBarStyleHorizontal"/>
-
-
+            android:visibility="invisible" />
     </RelativeLayout>
-
-    <!--<ImageButton-->
-        <!--android:id="@+id/camera_button"-->
-        <!--android:layout_width="@dimen/round_button_diameter"-->
-        <!--android:layout_height="@dimen/round_button_diameter"-->
-        <!--android:layout_gravity="end|bottom"-->
-        <!--android:layout_marginBottom="@dimen/camera_button_margin"-->
-        <!--android:layout_marginEnd="@dimen/camera_button_margin"-->
-        <!--android:src="@android:drawable/ic_menu_camera"-->
-        <!--android:tint="@android:color/white"-->
-        <!--android:background="@drawable/oval_ripple"-->
-        <!--android:elevation="@dimen/elevation_low"/>-->
-
 
 </FrameLayout>

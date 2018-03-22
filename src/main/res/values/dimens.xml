@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <dimen name="bottom_icon_width">126dp</dimen>
-    <dimen name="bottom_toolbar">68dp</dimen>
-    <dimen name="take_picture_size">60dp</dimen>
-    <dimen name="activity_horizontal_margin">16dp</dimen>
-    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="shortcut_sdk_bottom_icon_width">126dp</dimen>
+    <dimen name="shortcut_sdk_bottom_toolbar">68dp</dimen>
+    <dimen name="shortcut_sdk_take_picture_size">60dp</dimen>
+    <dimen name="shortcut_sdk_activity_horizontal_margin">16dp</dimen>
+    <dimen name="shortcut_sdk_activity_vertical_margin">16dp</dimen>
 
 </resources>
