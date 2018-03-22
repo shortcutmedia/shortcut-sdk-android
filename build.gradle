@@ -3,16 +3,32 @@
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  */
+buildscript {
+    repositories {
+        google()
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.1.0-rc03'
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        jcenter()
+    }
+}
 
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 21
-    buildToolsVersion "21.0.1"
+    compileSdkVersion 27
+    buildToolsVersion "27.0.3"
 
     defaultConfig {
         minSdkVersion 8
-        targetSdkVersion 21
+        targetSdkVersion 27
         versionCode 1
         versionName "1.0"
     }
@@ -22,12 +38,13 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    useLibrary 'org.apache.http.legacy'
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile files('libs/commons-codec-1.4.jar')
-    compile files('libs/commons-io-1.2.jar')
-    compile files('libs/zxing-2.1.jar')
-    compile 'com.android.support:appcompat-v7:21.0.0'
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation files('libs/commons-codec-1.4.jar')
+    implementation files('libs/commons-io-1.2.jar')
+    implementation files('libs/zxing-2.1.jar')
+    implementation 'com.android.support:appcompat-v7:27.1.0'
 }
