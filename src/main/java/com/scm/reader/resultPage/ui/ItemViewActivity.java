@@ -19,22 +19,21 @@
 
 package com.scm.reader.resultPage.ui;
 
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 
 import com.scm.shortcutreadersdk.R;
 
 import static com.scm.util.LogUtils.LOGD;
 import static com.scm.util.LogUtils.makeLogTag;
 
-public class ItemViewActivity extends ActionBarActivity implements ItemViewFragment.UserAgentBuilderCallback  {
+public class ItemViewActivity extends AppCompatActivity implements ItemViewFragment.UserAgentBuilderCallback {
 
-    public static final String TAG = makeLogTag(ItemViewActivity.class);
+    protected static final String TAG = makeLogTag(ItemViewActivity.class);
 
     protected ItemViewFragment createFragment() {
         return new ItemViewFragment();
     }
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
