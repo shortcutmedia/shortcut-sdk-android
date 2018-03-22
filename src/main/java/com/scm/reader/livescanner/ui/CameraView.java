@@ -80,7 +80,7 @@ import static com.scm.reader.livescanner.util.LogUtils.logError;
  */
 public class CameraView extends ShortcutSearchView implements SurfaceHolder.Callback {
 
-    public static final String TAG = "com.scm.reader.livescanner.CameraView";
+    public static final String TAG = "livescanner.CameraView";
 
     public static final String TMP_FILE_PREFIX = "ShortcutCamera";
 

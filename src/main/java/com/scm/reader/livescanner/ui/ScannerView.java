@@ -40,7 +40,7 @@ import com.scm.shortcutreadersdk.R;
 
 public class ScannerView extends ShortcutSearchView implements KEventListener {
 
-    public static final String TAG = "com.scm.reader.livescanner.ScannerView";
+    public static final String TAG = "livescanner.ScannerView";
 
 
     private KooabaScanner mScanner;
