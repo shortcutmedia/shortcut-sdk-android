@@ -408,7 +408,6 @@ public class CameraView extends ShortcutSearchView implements TextureView.Surfac
         public void cancel() {
             logDebug("Cancelling " + this.getClass().getSimpleName());
             cancel(true);
-            imageRecognizer.cancelRequest();
         }
 
         private boolean executeSearch() {

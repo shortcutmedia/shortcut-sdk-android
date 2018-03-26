@@ -24,137 +24,135 @@ package com.scm.reader.livescanner.sdk;
  * the SDK.
  */
 public class KConfig {
-  // configuration
-  private String accessKey;
-  private String secretKey;
-  private String requestedMetadata;
-  private Float  histogramThreshold;
+    // configuration
+    private String accessKey;
+    private String secretKey;
+    private String requestedMetadata;
+    private Float histogramThreshold;
 
-  private String  server;
-  private Integer port;
-  private String  path;
-  private Integer scale;
-  private Integer jpegQuality;
-  private Integer uploadJpegQuality;
-  private Integer uploadJpegMaxWidthHeight;
+    private String server;
+    private Integer port;
+    private String path;
+    private Integer scale;
+    private Integer jpegQuality;
+    private Integer uploadJpegQuality;
+    private Integer uploadJpegMaxWidthHeight;
 
-  protected static final Object configLock = new Object();
+    protected static final Object configLock = new Object();
 
-  private static KConfig ref;
+    private static KConfig ref;
 
-  private KConfig() {
-    synchronized (configLock) {
-      accessKey          = "1b98e2311ac23927b58a96c5e687f99f997e5bee";
-      secretKey          = "e2c3f161916b2f931d9197dab78475190d4b46fd";
-      requestedMetadata  = "external-references,minimal,extended";
-      histogramThreshold = 0.5f;
-      server             = "query-api.kooaba.com";
-//      server             = "192.168.0.106:9000";
-      port               = 80;
-      path               = "/v4/query";
-      scale              = 640;
-      jpegQuality        = 50;
-      uploadJpegQuality  = 75;
-      uploadJpegMaxWidthHeight = 800;
+    private KConfig() {
+        synchronized (configLock) {
+            requestedMetadata = "external-references,minimal,extended";
+            histogramThreshold = 0.5f;
+            server = "query-api.kooaba.com";
+            port = 80;
+            path = "/v4/query";
+            scale = 640;
+            jpegQuality = 50;
+            uploadJpegQuality = 75;
+            uploadJpegMaxWidthHeight = 800;
 
+        }
     }
-  }
 
-  /**
-   * Get and instance of the configuration object in the SDK.
-   * @return KConfig object - the configuration object in the SDK.
-   */
-  public static synchronized KConfig getConfig() {
-    if (ref == null)
-      ref = new KConfig();
-    return ref;
-  }
+    /**
+     * Get and instance of the configuration object in the SDK.
+     *
+     * @return KConfig object - the configuration object in the SDK.
+     */
+    public static synchronized KConfig getConfig() {
+        if (ref == null)
+            ref = new KConfig();
+        return ref;
+    }
 
-  public String getAccessKey() {
-    return accessKey;
-  }
+    public String getAccessKey() {
+        return accessKey;
+    }
 
-  public String getSecretKey() {
-    return secretKey;
-  }
+    public String getSecretKey() {
+        return secretKey;
+    }
 
-  public String getRequestedMetadata() {
-    return requestedMetadata;
-  }
+    public String getRequestedMetadata() {
+        return requestedMetadata;
+    }
 
-  public Float getHistogramThreshold() {
-    return histogramThreshold;
-  }
+    public Float getHistogramThreshold() {
+        return histogramThreshold;
+    }
 
-  public void setAccessKey(String accessKey) {
-    this.accessKey = accessKey;
-  }
+    public void setAccessKey(String accessKey) {
+        this.accessKey = accessKey;
+    }
 
-  public void setSecretKey(String secretKey) {
-    this.secretKey = secretKey;
-  }
+    public void setSecretKey(String secretKey) {
+        this.secretKey = secretKey;
+    }
 
-  public void setRequestedMetadata(String requestedMetadata) {
-    this.requestedMetadata = requestedMetadata;
-  }
+    public void setRequestedMetadata(String requestedMetadata) {
+        this.requestedMetadata = requestedMetadata;
+    }
 
-  public void setHistogramThreshold(Float histogramThreshold) {
-    this.histogramThreshold = histogramThreshold;
-  }
+    public void setHistogramThreshold(Float histogramThreshold) {
+        this.histogramThreshold = histogramThreshold;
+    }
 
-  public String getServer() {
-    return server;
-  }
+    public String getServer() {
+        return server;
+    }
 
-  public void setServer(String server) {
-    this.server = server;
-  }
+    public void setServer(String server) {
+        this.server = server;
+    }
 
-  public Integer getPort() {
-    return port;
-  }
+    public Integer getPort() {
+        return port;
+    }
 
-  public void setPort(Integer port) {
-    this.port = port;
-  }
+    public void setPort(Integer port) {
+        this.port = port;
+    }
 
-  public String getPath() {
-    return path;
-  }
+    public String getPath() {
+        return path;
+    }
 
-  public void setPath(String path) {
-    this.path = path;
-  }
+    public void setPath(String path) {
+        this.path = path;
+    }
 
-  public Integer getScale() {
-    return scale;
-  }
+    public Integer getScale() {
+        return scale;
+    }
 
-  public void setScale(Integer scale) {
-    this.scale = scale;
-  }
+    public void setScale(Integer scale) {
+        this.scale = scale;
+    }
 
-  public Integer getJpegQuality() {
-    return jpegQuality;
-  }
+    public Integer getJpegQuality() {
+        return jpegQuality;
+    }
 
-  public void setJpegQuality(Integer jpegQuality) {
-    this.jpegQuality = jpegQuality;
-  }
+    public void setJpegQuality(Integer jpegQuality) {
+        this.jpegQuality = jpegQuality;
+    }
 
-  public Integer getUploadJpegQuality() {
-    return uploadJpegQuality;
-  }
+    public Integer getUploadJpegQuality() {
+        return uploadJpegQuality;
+    }
 
-  public void setUploadJpegQuality(Integer uploadJpegQuality) {
-    this.uploadJpegQuality = uploadJpegQuality;
-  }
+    public void setUploadJpegQuality(Integer uploadJpegQuality) {
+        this.uploadJpegQuality = uploadJpegQuality;
+    }
 
-  public Integer getUploadJpegMaxWidthHeight() {
-    return uploadJpegMaxWidthHeight;
-  }
+    public Integer getUploadJpegMaxWidthHeight() {
+        return uploadJpegMaxWidthHeight;
+    }
 
-  public void setUploadJpegMaxWidthHeight(Integer uploadJpegMaxWidthHeight) {
-    this.uploadJpegMaxWidthHeight = uploadJpegMaxWidthHeight;
-  }
+    public void setUploadJpegMaxWidthHeight(Integer uploadJpegMaxWidthHeight) {
+        this.uploadJpegMaxWidthHeight = uploadJpegMaxWidthHeight;
+    }
 }
