@@ -22,18 +22,17 @@ package com.scm.reader.livescanner.sdk.camera;
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Matrix;
-import android.graphics.Point;
+import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.media.MediaPlayer;
 import android.view.Display;
 import android.view.OrientationEventListener;
 import android.view.Surface;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
+import android.view.TextureView;
 import android.view.WindowManager;
 
 import com.scm.reader.livescanner.sdk.KConfig;
-import com.scm.reader.livescanner.util.PictureUtils;
+import com.scm.reader.livescanner.util.Size;
 import com.scm.shortcutreadersdk.R;
 
 import java.util.Collections;
@@ -56,9 +55,11 @@ public class LegacyCamera {
     private boolean isCameraStarted;
     private boolean isPicutreTakingInProgress;
 
-    private SurfaceView mSurfaceView;
+    private TextureView mTextureView;
     private int mSurfaceWidth;
     private int mSurfaceHeight;
+
+    private Context mContext;
 
     private int lastOrientation = ORIENTATION_UNKNOWN;
     private KooabaCameraOrientationEventListener orientationListener;
@@ -66,14 +67,14 @@ public class LegacyCamera {
     private Camera.PictureCallback mPictureCallback;
     private MediaPlayer clickSound;
 
-    public LegacyCamera(SurfaceView surfaceView, int surfaceWidth, int surfaceHeight, Camera.PictureCallback callback) {
-        mSurfaceView = surfaceView;
-        mSurfaceWidth = surfaceWidth;
-        mSurfaceHeight = surfaceHeight;
+    public LegacyCamera(TextureView textureView, Context context, Camera.PictureCallback callback) {
+        mTextureView = textureView;
         mPictureCallback = callback;
+        mSurfaceWidth = mTextureView.getWidth();
+        mSurfaceHeight = mTextureView.getHeight();
+        mContext = context;
 
-        orientationListener = new KooabaCameraOrientationEventListener(mSurfaceView.getContext());
-        orientationListener.enable();
+        orientationListener = new KooabaCameraOrientationEventListener(mContext);
         new LoadShutterSoundThread().start();
     }
 
@@ -86,22 +87,27 @@ public class LegacyCamera {
             stopCamera();
         }
 
-        orientationListener.enable();
 
         mCamera = Camera.open();
+        orientationListener.enable();
         Camera.Parameters p = mCamera.getParameters();
 
-        configurePreviewSize(mSurfaceWidth, mSurfaceHeight, p);
+        boolean isSensorRotated = configureRotation(mCamera);
+        Size previewSize = configurePreviewSize(mSurfaceWidth, mSurfaceHeight, p);
+        mTextureView.setTransform(
+                calculateTextureTransform(
+                        new Size(mSurfaceWidth, mSurfaceHeight),
+                        previewSize, isSensorRotated)
+        );
+
         configureFrameRate(p);
         configureFlashMode(p);
         configureFocusMode(p);
-        configureRotation(p, mCamera);
         configureJPEGQuality(p);
         configurePictureSize(p);
 
         mCamera.setParameters(p);
-
-        setPreviewDisplay(mSurfaceView.getHolder());
+        setPreviewDisplay(mTextureView.getSurfaceTexture());
 
         mCamera.startPreview();
         mCamera.setErrorCallback(new Camera.ErrorCallback() {
@@ -122,17 +128,13 @@ public class LegacyCamera {
         if (isDebugLog()) {
             logDebug("stopCamera");
         }
-
         if (isCameraStarted) {
-
             cancelFocus();
-
             mCamera.stopPreview();
             mCamera.release();
             mCamera = null;
             orientationListener.disable();
             isCameraStarted = false;
-
         }
     }
 
@@ -144,13 +146,10 @@ public class LegacyCamera {
 
     public void doFocusAndWaitForConfirmation() {
         doFocus(new AutoFocusCallback() {
-
             public void onAutoFocus(boolean flag, Camera camera) {
             }
-
         });
     }
-
 
     public void doFocusAndTakePicture() {
         doFocus(new AutoFocusCallback());
@@ -186,7 +185,7 @@ public class LegacyCamera {
         callback.onAutoFocus(false, mCamera);
     }
 
-    protected void configurePreviewSize(int surfaceWidth, int surfaceHeight, Camera.Parameters p) {
+    protected Size configurePreviewSize(int surfaceWidth, int surfaceHeight, Camera.Parameters p) {
         int previewWidth = surfaceWidth;
         int previewHeight = surfaceHeight;
 
@@ -204,7 +203,7 @@ public class LegacyCamera {
             logDebug("surface size: " + surfaceWidth + "/" + surfaceHeight + ", image size: " + previewWidth + "/" + previewHeight);
         }
         p.setPreviewSize(previewWidth, previewHeight);
-        new Point(previewWidth, previewHeight);
+        return new Size(previewWidth, previewHeight);
     }
 
     protected void configureFrameRate(Camera.Parameters p) {
@@ -222,17 +221,58 @@ public class LegacyCamera {
     }
 
     protected void configureFocusMode(Camera.Parameters p) {
-        if (isSupported(Camera.Parameters.FOCUS_MODE_AUTO, p.getSupportedFocusModes())) {
-            logInfo("Device supports auto focus, enabling it");
-            p.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+        if (isSupported(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE, p.getSupportedFocusModes())) {
+            logInfo("Device supports continuous focus, enabling it");
+            p.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+        } else {
+            if (isSupported(Camera.Parameters.FOCUS_MODE_AUTO, p.getSupportedFocusModes())) {
+                logInfo("Device supports auto focus, enabling it");
+                p.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+            }
         }
     }
 
-    protected void configureRotation(Camera.Parameters p, Camera camera) {
-        p.setRotation(PictureUtils.roundOrientation(lastOrientation + 90));
+    protected boolean configureRotation(Camera camera) {
+        Display display = ((WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+        int rotation = calculateRotation(display);
+        camera.setDisplayOrientation(rotation);
+        return rotation % 180 != 0;
+    }
 
-        Display display = ((WindowManager) mSurfaceView.getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
-        camera.setDisplayOrientation(calculateRotation(display));
+    protected Matrix calculateTextureTransform(Size textureSize, Size previewSize, boolean isSensorRotated) {
+        float ratioTexture = textureSize.width / textureSize.height;
+        float ratioPreview = previewSize.width / previewSize.height;
+        if (isSensorRotated) {
+            ratioPreview = previewSize.height / previewSize.width;
+        }
+
+        float scaleX;
+        float scaleY;
+
+        // We scale so that either width or height fits exactly in the TextureView, and the other
+        // is bigger (cropped).
+        if (ratioTexture < ratioPreview) {
+            scaleX = ratioPreview / ratioTexture;
+            scaleY = 1;
+        } else {
+            scaleX = 1;
+            scaleY = ratioTexture / ratioPreview;
+        }
+
+        Matrix matrix = new Matrix();
+
+        matrix.setScale(scaleX, scaleY);
+
+        // Center the preview
+        float scaledWidth = textureSize.width * scaleX;
+        float scaledHeight = textureSize.height * scaleY;
+        float dx = (textureSize.width - scaledWidth) / 2;
+        float dy = (textureSize.height - scaledHeight) / 2;
+
+        // Perform the translation on the scaled preview
+        matrix.postTranslate(dx, dy);
+
+        return matrix;
     }
 
     private int calculateRotation(Display display) {
@@ -255,13 +295,7 @@ public class LegacyCamera {
                 new android.hardware.Camera.CameraInfo();
         android.hardware.Camera.getCameraInfo(0, info);
 
-        int finalRotation;
-        if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-            finalRotation = (info.orientation + rotation) % 360;
-            finalRotation = (360 - finalRotation) % 360;  // compensate the mirror
-        } else {  // back-facing
-            finalRotation = (info.orientation - rotation + 360) % 360;
-        }
+        int finalRotation = (info.orientation - rotation + 360) % 360;
         return finalRotation;
     }
 
@@ -272,7 +306,6 @@ public class LegacyCamera {
     protected void configurePictureSize(Camera.Parameters p) {
         // according to this http://stackoverflow.com/questions/6982366/the-picture-taken-by-camera-of-android-2-3-3-cant-display-normally
         // setPictureSize always needs to be set in Android 2.3.3;
-
         // This condition returns the url where the image will be stored. I don't see any connection between
         // it and setPictureSize. Picture size needs to be set anyways.
         //if (getIntent().getParcelableExtra(MediaStore.EXTRA_OUTPUT) == null) {
@@ -307,9 +340,9 @@ public class LegacyCamera {
     }
 
 
-    private void setPreviewDisplay(SurfaceHolder holder) {
+    private void setPreviewDisplay(SurfaceTexture holder) {
         try {
-            mCamera.setPreviewDisplay(holder);
+            mCamera.setPreviewTexture(holder);
         } catch (Throwable ex) {
             stopCamera();
             logError("setPreviewDisplay failed", ex);
@@ -358,7 +391,6 @@ public class LegacyCamera {
         return supported == null ? false : supported.indexOf(value) >= 0;
     }
 
-
     class KooabaCameraOrientationEventListener extends OrientationEventListener {
 
         public KooabaCameraOrientationEventListener(Context context) {
@@ -368,26 +400,21 @@ public class LegacyCamera {
         @Override
         public void onOrientationChanged(int orientation) {
             if (orientation != lastOrientation && orientation != ORIENTATION_UNKNOWN) {
-                lastOrientation = orientation;
-
-                int roundedOrientattion = PictureUtils.roundOrientation(orientation);
-                if (isDebugLog()) {
-                    logDebug("onOrientationChanged:" + orientation + ", rounded: " + roundedOrientattion);
+                if (orientation == ORIENTATION_UNKNOWN) return;
+                android.hardware.Camera.CameraInfo info =
+                        new android.hardware.Camera.CameraInfo();
+                android.hardware.Camera.getCameraInfo(0, info);
+                orientation = (orientation + 45) / 90 * 90;
+                int rotation = 0;
+                if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+                    rotation = (info.orientation - orientation + 360) % 360;
+                } else {  // back-facing camera
+                    rotation = (info.orientation + orientation) % 360;
                 }
-                int imageRotation = 0;
-                if (roundedOrientattion == 0) {
-                    imageRotation = 270;
-                } else if (roundedOrientattion == 90) {
-                    imageRotation = 180;
-                } else if (roundedOrientattion == 180) {
-                    imageRotation = 90;
-                }
-
-                Matrix matrix = new Matrix();
-                matrix.postRotate(imageRotation);
-
-                // ImageButton button = (ImageButton) findViewById(R.id.take_picture_button);
-                // button.setCompoundDrawables(rotateDrawable(R.drawable.ic_menu_camera, matrix), null, null, null);
+                lastOrientation = rotation;
+                Camera.Parameters p = mCamera.getParameters();
+                p.setRotation(lastOrientation);
+                mCamera.setParameters(p);
             }
         }
     }
@@ -413,7 +440,7 @@ public class LegacyCamera {
 
             try {
                 clickSound = new MediaPlayer();
-                AssetFileDescriptor afd = mSurfaceView.getContext().getResources().openRawResourceFd(R.raw.shortcut_sdk_camera_click);
+                AssetFileDescriptor afd = mContext.getResources().openRawResourceFd(R.raw.shortcut_sdk_camera_click);
                 if (clickSound != null) {
                     clickSound.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
                     clickSound.setAudioStreamType(STREAM_SYSTEM);
@@ -424,6 +451,4 @@ public class LegacyCamera {
             }
         }
     }
-
-
 }

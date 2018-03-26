@@ -20,25 +20,20 @@
 package com.scm.reader.livescanner.ui;
 
 import android.app.Activity;
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Bundle;
 import android.os.Handler;
-import android.os.Vibrator;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.OrientationEventListener;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
+import android.view.TextureView;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageButton;
@@ -52,8 +47,7 @@ import com.scm.reader.livescanner.search.ImageRecognizer;
 import com.scm.reader.livescanner.search.ImageScaler;
 import com.scm.reader.livescanner.search.Search;
 import com.scm.reader.livescanner.search.UriImage;
-import com.scm.reader.livescanner.util.LogUtils;
-import com.scm.reader.livescanner.util.Utils;
+import com.scm.reader.livescanner.util.PermissionHelper;
 import com.scm.shortcutreadersdk.R;
 
 import java.io.ByteArrayOutputStream;
@@ -65,12 +59,10 @@ import java.util.Date;
 
 import static android.graphics.Bitmap.CompressFormat.JPEG;
 import static android.graphics.BitmapFactory.decodeByteArray;
-import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 import static android.view.KeyEvent.KEYCODE_DPAD_CENTER;
 import static android.view.Surface.ROTATION_0;
 import static android.view.Surface.ROTATION_270;
 import static android.view.Surface.ROTATION_90;
-import static android.view.SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS;
 import static com.scm.reader.livescanner.util.LogUtils.isDebugLog;
 import static com.scm.reader.livescanner.util.LogUtils.logDebug;
 import static com.scm.reader.livescanner.util.LogUtils.logError;
@@ -78,23 +70,20 @@ import static com.scm.reader.livescanner.util.LogUtils.logError;
 /**
  * Created by franco on 09/12/14.
  */
-public class CameraView extends ShortcutSearchView implements SurfaceHolder.Callback {
+public class CameraView extends ShortcutSearchView implements TextureView.SurfaceTextureListener {
 
     public static final String TAG = "livescanner.CameraView";
 
     public static final String TMP_FILE_PREFIX = "ShortcutCamera";
 
-    private SurfaceView mSurfaceView;
+    private TextureView mTextureView;
     private ImageView mPreviewView;
-    private int mScreenWidth;
-    private int mScreenHeight;
 
     private LegacyCamera mCamera;
     private Uri rawCameraResultUri;
     protected OrientationEventListener orientationListener;
     private SearchTask mSearchTask;
     private Handler handler = new Handler();
-
 
     public CameraView(Activity holdingActivity) {
         this(holdingActivity, null);
@@ -108,28 +97,23 @@ public class CameraView extends ShortcutSearchView implements SurfaceHolder.Call
     @Override
     public void onResume() {
         super.onResume();
-
-        // CameraManager must be initialized here, not in onCreate(). This is necessary because we don't
-        // want to open the camera driver and measure the screen size if we're going to show the help on
-        // first launch. That led to bugs where the scanning rectangle was the wrong size and partially
-        // off screen.
-        //cameraManager = new CameraManager(getApplication());
-
-        mCamera = new LegacyCamera(mSurfaceView, mScreenWidth, mScreenHeight, mJPEGCallback );
-
+        if (mCamera != null)
+            mCamera.startCamera();
         showAllViews();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        mCamera.stopCamera();
+        if (mCamera != null)
+            mCamera.stopCamera();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mCamera.onDestroy();
+        if (mCamera != null)
+            mCamera.onDestroy();
     }
     //endregion
 
@@ -168,19 +152,12 @@ public class CameraView extends ShortcutSearchView implements SurfaceHolder.Call
     }
 
     protected void initializeWindow() {
-
-        WindowManager manager = (WindowManager) mHoldingActivity.getSystemService(Context.WINDOW_SERVICE);
-        mScreenWidth = Utils.getScreenResolution(manager).x;
-        mScreenHeight = Utils.getScreenResolution(manager).y;
-
-        LayoutInflater inflater = mHoldingActivity.getLayoutInflater();
         mHoldingActivity.setContentView(R.layout.shortcut_sdk_camera);
 
-        mSurfaceView = (SurfaceView) mHoldingActivity.findViewById(R.id.camerasurface);
-        mSurfaceView.getHolder().addCallback(this);
-        mSurfaceView.getHolder().setType(SURFACE_TYPE_PUSH_BUFFERS);
+        mTextureView = (TextureView) mHoldingActivity.findViewById(R.id.cameratexture);
+        mTextureView.setSurfaceTextureListener(this);
 
-        mPreviewView = (ImageView)  mHoldingActivity.findViewById(R.id.upload_image);
+        mPreviewView = (ImageView) mHoldingActivity.findViewById(R.id.upload_image);
 
         final ImageButton button = (ImageButton) mHoldingActivity.findViewById(R.id.take_picture_button);
         button.setOnClickListener(new View.OnClickListener() {
@@ -209,32 +186,6 @@ public class CameraView extends ShortcutSearchView implements SurfaceHolder.Call
                 });
             }
         }).start();
-
-    }
-
-    public void surfaceCreated(SurfaceHolder holder) {
-        if (isDebugLog()) {
-            logDebug("CameraActivity surfaceCreated");
-        }
-    }
-
-    public void surfaceDestroyed(SurfaceHolder holder) {
-        if (isDebugLog()) {
-            logDebug("CameraActivity surfaceDestroyed");
-        }
-    }
-
-    public void surfaceChanged(SurfaceHolder holder, int format, int surfaceWidth, int surfaceHeight) {
-        if (isDebugLog()) {
-            logDebug("CameraActivity surfaceChanged" +
-                    ": cameraStarted=" + mCamera.isCameraStarted() +
-                    ", width=" + surfaceWidth +
-                    ", height=" + surfaceHeight +
-                    ", holder surface=" + holder.getSurface() +
-                    ", holder surface frame=" + holder.getSurfaceFrame());
-        }
-
-        startCamera();
 
     }
 
@@ -288,7 +239,7 @@ public class CameraView extends ShortcutSearchView implements SurfaceHolder.Call
 
                 mPreviewView.setImageBitmap(img);
                 mPreviewView.setVisibility(View.VISIBLE);
-                mSurfaceView.setVisibility(View.GONE);
+                mTextureView.setVisibility(View.GONE);
             }
         });
     }
@@ -304,7 +255,7 @@ public class CameraView extends ShortcutSearchView implements SurfaceHolder.Call
 
 
                 mPreviewView.setVisibility(View.GONE);
-                mSurfaceView.setVisibility(View.VISIBLE);
+                mTextureView.setVisibility(View.VISIBLE);
             }
         });
 
@@ -312,6 +263,7 @@ public class CameraView extends ShortcutSearchView implements SurfaceHolder.Call
 
     private void startCamera() {
         if (createCameraResult()) {
+            mCamera = new LegacyCamera(mTextureView, mHoldingActivity, mJPEGCallback);
             mCamera.startCamera();
         }
     }
@@ -344,6 +296,33 @@ public class CameraView extends ShortcutSearchView implements SurfaceHolder.Call
         rawCameraResultUri = null;
     }
 
+    @Override
+    public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
+        if (!PermissionHelper.hasCameraPermission(mHoldingActivity)) {
+            PermissionHelper.requestCameraPermission(mHoldingActivity, false);
+        } else {
+            startCamera();
+        }
+    }
+
+    @Override
+    public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
+        // Ignored, Camera does all the work for us
+    }
+
+    @Override
+    public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
+        if (mCamera != null) {
+            mCamera.stopCamera();
+        }
+        return true;
+    }
+
+    @Override
+    public void onSurfaceTextureUpdated(SurfaceTexture surface) {
+        // Invoked every time there's a new Camera preview frame
+        //Log.d(TAG, "updated, ts=" + surface.getTimestamp());
+    }
 
 
     private class SearchTask extends AsyncTask<Void, Void, Search> {
@@ -368,7 +347,7 @@ public class CameraView extends ShortcutSearchView implements SurfaceHolder.Call
             rawCameraResult = data;
         }
 
-        public SearchTask(Uri rawImageURI)  {
+        public SearchTask(Uri rawImageURI) {
             mRawImageURI = rawImageURI;
         }
 
@@ -438,11 +417,11 @@ public class CameraView extends ShortcutSearchView implements SurfaceHolder.Call
             }
             try {
                 Search qrSearch = zXingRecognizer.recognize(search.getImage());
-                if(qrSearch.isRecognized()){
+                if (qrSearch.isRecognized()) {
                     //Bitmap thumbnail for barcode
                     Bitmap barcodeBitmap = BitmapFactory.decodeResource(mHoldingActivity.getBaseContext().getResources(), R.drawable.shortcut_sdk_barcode_thumnbail);
                     search.modifyToQRSearch(qrSearch, barcodeBitmap);
-                }else{
+                } else {
                     search = imageRecognizer.query(mHoldingActivity, search);
                 }
 
@@ -512,7 +491,9 @@ public class CameraView extends ShortcutSearchView implements SurfaceHolder.Call
         protected void onPostExecute(Search result) {
             super.onPostExecute(result);
 
-            if (isCancelled()) { return; }
+            if (isCancelled()) {
+                return;
+            }
 
             KEvent event = new KEvent(search);
 
@@ -530,5 +511,4 @@ public class CameraView extends ShortcutSearchView implements SurfaceHolder.Call
             }
         }
     }
-
 }
