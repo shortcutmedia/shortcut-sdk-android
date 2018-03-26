@@ -204,7 +204,7 @@ public class LegacyCamera {
             logDebug("surface size: " + surfaceWidth + "/" + surfaceHeight + ", image size: " + previewWidth + "/" + previewHeight);
         }
         p.setPreviewSize(previewWidth, previewHeight);
-        new Point (previewWidth, previewHeight);
+        new Point(previewWidth, previewHeight);
     }
 
     protected void configureFrameRate(Camera.Parameters p) {
@@ -231,12 +231,38 @@ public class LegacyCamera {
     protected void configureRotation(Camera.Parameters p, Camera camera) {
         p.setRotation(PictureUtils.roundOrientation(lastOrientation + 90));
 
-        Display display = ((WindowManager)mSurfaceView.getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
-        //Will display camera Preview wrongly if we don't add this
-        if(display.getRotation() == Surface.ROTATION_0)
-        {
-            camera.setDisplayOrientation(90);
+        Display display = ((WindowManager) mSurfaceView.getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+        camera.setDisplayOrientation(calculateRotation(display));
+    }
+
+    private int calculateRotation(Display display) {
+        int rotation = 0;
+        switch (display.getRotation()) {
+            case Surface.ROTATION_0:
+                rotation = 0;
+                break;
+            case Surface.ROTATION_90:
+                rotation = 90;
+                break;
+            case Surface.ROTATION_180:
+                rotation = 180;
+                break;
+            case Surface.ROTATION_270:
+                rotation = 270;
+                break;
         }
+        android.hardware.Camera.CameraInfo info =
+                new android.hardware.Camera.CameraInfo();
+        android.hardware.Camera.getCameraInfo(0, info);
+
+        int finalRotation;
+        if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+            finalRotation = (info.orientation + rotation) % 360;
+            finalRotation = (360 - finalRotation) % 360;  // compensate the mirror
+        } else {  // back-facing
+            finalRotation = (info.orientation - rotation + 360) % 360;
+        }
+        return finalRotation;
     }
 
     protected void configureJPEGQuality(Camera.Parameters p) {
@@ -279,7 +305,6 @@ public class LegacyCamera {
             isPicutreTakingInProgress = false;
         }
     }
-
 
 
     private void setPreviewDisplay(SurfaceHolder holder) {
@@ -399,7 +424,6 @@ public class LegacyCamera {
             }
         }
     }
-
 
 
 }
