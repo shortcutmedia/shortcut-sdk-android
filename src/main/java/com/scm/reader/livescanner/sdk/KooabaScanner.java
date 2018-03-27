@@ -36,7 +36,7 @@ import java.io.IOException;
 
 /**
  * <p>KooabaScanner is the main object which encapsulates the entire scanning process. It should be started from
- * within an activity.<br />
+ * within an activity.<br>
  * First one needs to instantiate an object within an activity.</p>
  *
  * <code>KooabaScanner kScanner = new KooabaScanner(Activity);</code>
