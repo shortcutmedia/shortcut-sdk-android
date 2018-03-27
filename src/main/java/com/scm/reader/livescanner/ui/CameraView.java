@@ -71,18 +71,12 @@ import static com.scm.reader.livescanner.util.LogUtils.logError;
  * Created by franco on 09/12/14.
  */
 public class CameraView extends ShortcutSearchView implements TextureView.SurfaceTextureListener {
-
     public static final String TAG = "livescanner.CameraView";
-
-    public static final String TMP_FILE_PREFIX = "ShortcutCamera";
-
+    private static final String TMP_FILE_PREFIX = "ShortcutCamera";
     private TextureView mTextureView;
     private ImageView mPreviewView;
-
     private LegacyCamera mCamera;
     private Uri rawCameraResultUri;
-    protected OrientationEventListener orientationListener;
-    private SearchTask mSearchTask;
     private Handler handler = new Handler();
 
     public CameraView(Activity holdingActivity) {
@@ -171,7 +165,6 @@ public class CameraView extends ShortcutSearchView implements TextureView.Surfac
         new Thread(new Runnable() {
             @Override
             public void run() {
-
                 try {
                     Thread.sleep(9000);
                 } catch (InterruptedException e) {
@@ -186,7 +179,6 @@ public class CameraView extends ShortcutSearchView implements TextureView.Surfac
                 });
             }
         }).start();
-
     }
 
     private void showAllViews() {
@@ -196,14 +188,11 @@ public class CameraView extends ShortcutSearchView implements TextureView.Surfac
         mHoldingActivity.findViewById(R.id.camera_view).setVisibility(View.VISIBLE);
     }
 
-
     private Camera.PictureCallback mJPEGCallback = new Camera.PictureCallback() {
 
         @Override
         public void onPictureTaken(byte[] data, Camera callbackCamera) {
-
             Uri rawImageURI = rawCameraResultUri;
-
             if (rawImageURI != null) {
                 try {
                     OutputStream outputStream = mHoldingActivity.getContentResolver().openOutputStream(rawImageURI);
@@ -212,16 +201,11 @@ public class CameraView extends ShortcutSearchView implements TextureView.Surfac
                     } finally {
                         outputStream.close();
                     }
-
-                    mSearchTask = (SearchTask) new SearchTask(rawImageURI).execute();
-
-//                    showSearchScreen();
+                    new SearchTask(rawImageURI).execute();
                 } catch (IOException ex) {
                     logError("Could not save full sized image to " + rawImageURI, ex);
                 }
-
             }
-
         }
     };
 
@@ -247,18 +231,14 @@ public class CameraView extends ShortcutSearchView implements TextureView.Surfac
     void hideSearchScreen() {
         handler.post(new Runnable() {
             public void run() {
-
                 View takePictureBar = mHoldingActivity.findViewById(R.id.take_picture_layout);
                 takePictureBar.setVisibility(View.VISIBLE);
                 View cameraUploading = mHoldingActivity.findViewById(R.id.camera_uploading);
                 cameraUploading.setVisibility(View.GONE);
-
-
                 mPreviewView.setVisibility(View.GONE);
                 mTextureView.setVisibility(View.VISIBLE);
             }
         });
-
     }
 
     private void startCamera() {
@@ -277,7 +257,6 @@ public class CameraView extends ShortcutSearchView implements TextureView.Surfac
             logError("Could not create temp file", e);
             return false;
         }
-
         return true;
     }
 
@@ -285,16 +264,13 @@ public class CameraView extends ShortcutSearchView implements TextureView.Surfac
         if (rawCameraResultUri == null) {
             return;
         }
-
         if (isDebugLog()) {
             logDebug("Removing full sized camera result from " + rawCameraResultUri);
         }
-
         File file = new File(rawCameraResultUri.getPath());
         if (!file.delete()) {
             Log.i(TAG, "Could not delete file" + rawCameraResultUri.getPath());
         }
-
         rawCameraResultUri = null;
     }
 
@@ -322,8 +298,6 @@ public class CameraView extends ShortcutSearchView implements TextureView.Surfac
 
     @Override
     public void onSurfaceTextureUpdated(SurfaceTexture surface) {
-        // Invoked every time there's a new Camera preview frame
-        //Log.d(TAG, "updated, ts=" + surface.getTimestamp());
     }
 
 
@@ -335,7 +309,6 @@ public class CameraView extends ShortcutSearchView implements TextureView.Surfac
         private ZXingRecognizer zXingRecognizer = new ZXingRecognizer();
         private byte[] rawCameraResult;
         private Uri mRawImageURI;
-
 
         public SearchTask() {
 
@@ -355,19 +328,12 @@ public class CameraView extends ShortcutSearchView implements TextureView.Surfac
 
         @Override
         protected Search doInBackground(Void... data) {
-
             try {
-
-
                 synchronized (mutex) {
-
                     if (search == null) {
                         Bitmap img = null;
-
                         img = scale();
-
                         img = fixRotation(img);
-
                         showSearchScreen(img);
                         createAndSaveNewSearch(img);
                     } else {

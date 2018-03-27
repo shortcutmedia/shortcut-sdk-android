@@ -48,4 +48,6 @@ dependencies {
     implementation files('libs/commons-io-1.2.jar')
     implementation files('libs/zxing-2.1.jar')
     implementation 'com.android.support:appcompat-v7:27.1.0'
+    implementation "android.arch.lifecycle:runtime:1.1.0"
+    annotationProcessor "android.arch.lifecycle:compiler:1.1.1"
 }

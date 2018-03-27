@@ -39,14 +39,9 @@ import com.scm.reader.livescanner.util.Utils;
 import com.scm.shortcutreadersdk.R;
 
 public class ScannerView extends ShortcutSearchView implements KEventListener {
-
     public static final String TAG = "livescanner.ScannerView";
-
-
     private KooabaScanner mScanner;
     private ScannerAnimation mScannerAnimation;
-
-    private View mAnimationView;
     private boolean mWelcomeGone;
 
     public ScannerView(Activity holdingActivity) {
@@ -72,16 +67,14 @@ public class ScannerView extends ShortcutSearchView implements KEventListener {
     }
     //endregion
 
-
     protected void initializeWindow() {
         // set up window
-
         WindowManager manager = (WindowManager) mHoldingActivity.getSystemService(Context.WINDOW_SERVICE);
         int screenWidth = Utils.getScreenResolution(manager).x;
         int screenHeight = Utils.getScreenResolution(manager).y;
 
         LayoutInflater inflater = mHoldingActivity.getLayoutInflater();
-        mAnimationView = inflater.inflate(R.layout.shortcut_sdk_scanner_animation, null);
+        View mAnimationView = inflater.inflate(R.layout.shortcut_sdk_scanner_animation, null);
         View scannerView = inflater.inflate(R.layout.shortcut_sdk_scanner, null);
         View bottomBar = inflater.inflate(R.layout.shortcut_sdk_bottom_bar, null);
 
@@ -112,14 +105,9 @@ public class ScannerView extends ShortcutSearchView implements KEventListener {
                         mHoldingActivity.findViewById(R.id.take_picture_instructions).setVisibility(View.GONE);
                     }
                 });
-
-
             }
         }).start();
-
-
     }
-
 
     @Override
     public void openInfoView() {
@@ -146,7 +134,6 @@ public class ScannerView extends ShortcutSearchView implements KEventListener {
         mScannerAnimation.stop();
     }
 
-
     @Override
     public void onImageRecognized(KEvent event) {
         mRecognitionCallbacks.onImageRecognized(event);
@@ -159,7 +146,6 @@ public class ScannerView extends ShortcutSearchView implements KEventListener {
 
     @Override
     public void onError(Exception e) {
-        Log.e("ScanActivity onError", e.getClass().getSimpleName() + ": " + e.getMessage());
     }
 
     @Override
@@ -169,24 +155,19 @@ public class ScannerView extends ShortcutSearchView implements KEventListener {
 
     @Override
     public void onContinueKooabaRecognition(String message) {
-        Log.d(TAG, "onContinueKooabaRecognition (message=" + message);
         if (!mScannerAnimation.isAnimationVisible()) {
             mScannerAnimation.start();
         }
-
         // don't hide the toast if scanner mode indicator is still displayed
         if(mWelcomeGone) {
             hideOverlayToast();
         }
-
     }
 
     @Override
     public void onPauseKooabaRecognition(String message) {
-        Log.d(TAG, "onPauseKooabaRecognition (message=" + message);
         if (!"moving".equals(message)) {
             mScannerAnimation.stop();
-
             mHoldingActivity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -195,7 +176,6 @@ public class ScannerView extends ShortcutSearchView implements KEventListener {
                     showOverlayToast();
                 }
             });
-
         }
     }
 

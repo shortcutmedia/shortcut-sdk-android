@@ -20,6 +20,9 @@
 package com.scm.reader.livescanner.ui;
 
 import android.app.Activity;
+import android.arch.lifecycle.Lifecycle;
+import android.arch.lifecycle.LifecycleObserver;
+import android.arch.lifecycle.OnLifecycleEvent;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
@@ -32,7 +35,7 @@ import com.scm.shortcutreadersdk.R;
 /**
  * Created by franco on 10/04/15.
  */
-public abstract class ShortcutSearchView {
+public abstract class ShortcutSearchView implements LifecycleObserver{
 
     public static final String TAG = "ShortcutSearchView";
 
@@ -47,17 +50,22 @@ public abstract class ShortcutSearchView {
 
     //region CALLBACK METHODS
     private static RecognitionCallbacks sDummyRecognitionCallbacks = new RecognitionCallbacks() {
-        public void onImageRecognized(KEvent event) {}
-        public void onImageNotRecognized(KEvent event) {}
+        public void onImageRecognized(KEvent event) {
+        }
+
+        public void onImageNotRecognized(KEvent event) {
+        }
     };
 
     public interface RecognitionCallbacks {
         void onImageRecognized(KEvent event);
+
         void onImageNotRecognized(KEvent event);
     }
 
     public interface InfoButtonCallbacks {
         void onInfoViewOpen();
+
         void onInfoViewClose();
     }
 
@@ -87,18 +95,32 @@ public abstract class ShortcutSearchView {
     //endregion
 
     //region LIFECYCLE METHODS
-    public void onCreate(Bundle savedInstanceState) {
+    @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
+    public void onCreate() {
         initializeWindow();
     }
-    public void onResume(){}
-    public void onPause() {}
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+    public void onResume() {
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+    public void onPause() {
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_START)
     public void onStart() {
         onAttach(mHoldingActivity);
     }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     public void onStop() {
         onDetach();
     }
-    public void onDestroy() {}
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+    public void onDestroy() {
+    }
     //endregion
 
     protected void onAttach(Activity activity) {
