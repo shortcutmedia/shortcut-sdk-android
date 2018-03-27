@@ -65,6 +65,7 @@ public class LegacyCamera {
     private KooabaCameraOrientationEventListener orientationListener;
 
     private Camera.PictureCallback mPictureCallback;
+    private Camera.PictureCallback mLocalPictureCallback;
     private MediaPlayer clickSound;
 
     public LegacyCamera(TextureView textureView, Context context, Camera.PictureCallback callback) {
@@ -75,6 +76,13 @@ public class LegacyCamera {
         mContext = context;
 
         orientationListener = new KooabaCameraOrientationEventListener(mContext);
+        mLocalPictureCallback = new Camera.PictureCallback() {
+            @Override
+            public void onPictureTaken(byte[] data, Camera camera) {
+                isPicutreTakingInProgress = false;
+                mPictureCallback.onPictureTaken(data, camera);
+            }
+        };
         new LoadShutterSoundThread().start();
     }
 
@@ -156,11 +164,10 @@ public class LegacyCamera {
     }
 
     public void takePicture() {
-//        hideAllViews(); // FIXME: is this needed? The view does seem just fine without hiding.
         mCamera.takePicture(
                 new ShutterSound(),
                 null,
-                mPictureCallback);
+                mLocalPictureCallback);
     }
 
     public boolean isCameraStarted() {

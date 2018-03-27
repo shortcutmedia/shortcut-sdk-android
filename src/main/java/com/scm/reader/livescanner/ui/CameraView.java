@@ -263,7 +263,9 @@ public class CameraView extends ShortcutSearchView implements TextureView.Surfac
 
     private void startCamera() {
         if (createCameraResult()) {
-            mCamera = new LegacyCamera(mTextureView, mHoldingActivity, mJPEGCallback);
+            if (mCamera == null) {
+                mCamera = new LegacyCamera(mTextureView, mHoldingActivity, mJPEGCallback);
+            }
             mCamera.startCamera();
         }
     }
@@ -489,7 +491,9 @@ public class CameraView extends ShortcutSearchView implements TextureView.Surfac
         @Override
         protected void onPostExecute(Search result) {
             super.onPostExecute(result);
-
+            hideSearchScreen();
+            createCameraResult();
+            startCamera();
             if (isCancelled()) {
                 return;
             }
