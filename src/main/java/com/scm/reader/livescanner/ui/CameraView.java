@@ -32,7 +32,6 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
-import android.view.OrientationEventListener;
 import android.view.TextureView;
 import android.view.View;
 import android.view.WindowManager;
@@ -47,7 +46,6 @@ import com.scm.reader.livescanner.search.ImageRecognizer;
 import com.scm.reader.livescanner.search.ImageScaler;
 import com.scm.reader.livescanner.search.Search;
 import com.scm.reader.livescanner.search.UriImage;
-import com.scm.reader.livescanner.util.PermissionHelper;
 import com.scm.shortcutreadersdk.R;
 
 import java.io.ByteArrayOutputStream;
@@ -265,11 +263,7 @@ public class CameraView extends ShortcutSearchView implements TextureView.Surfac
 
     @Override
     public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-        if (!PermissionHelper.hasCameraPermission(mHoldingActivity)) {
-            PermissionHelper.requestCameraPermission(mHoldingActivity, false);
-        } else {
-            startCamera();
-        }
+        startCamera();
     }
 
     @Override
