@@ -35,7 +35,7 @@ import com.scm.shortcutreadersdk.R;
 /**
  * Created by franco on 10/04/15.
  */
-public abstract class ShortcutSearchView implements LifecycleObserver{
+public abstract class ShortcutSearchView implements LifecycleObserver {
 
     public static final String TAG = "ShortcutSearchView";
 
@@ -75,10 +75,14 @@ public abstract class ShortcutSearchView implements LifecycleObserver{
 
     public ShortcutSearchView(Activity holdingActivity, Location location) {
         mHoldingActivity = holdingActivity;
-        mRegisteredRecognitionCallbacks = (RecognitionCallbacks) holdingActivity;
         mLocation = location;
     }
 
+    /**
+     * Set the receiver of the Recognition results
+     *
+     * @param callback
+     */
     public void setRecognitionCallbacks(final RecognitionCallbacks callback) {
         mRecognitionCallbacks = mRegisteredRecognitionCallbacks = callback;
     }
