@@ -43,7 +43,7 @@ public abstract class ShortcutSearchView implements LifecycleObserver {
     protected Location mLocation;
 
     protected RecognitionCallbacks mRecognitionCallbacks = sDummyRecognitionCallbacks;
-    private RecognitionCallbacks mRegisteredRecognitionCallbacks;
+    private RecognitionCallbacks mRegisteredRecognitionCallbacks = sDummyRecognitionCallbacks;
     private ChangeCameraModeCallback mChangeCameraModeCallback;
     private InfoButtonCallbacks mInfoButtonCallback;
     private boolean isInfoViewOpen;
