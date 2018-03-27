@@ -33,7 +33,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.location.Location;
-import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 
@@ -42,6 +41,7 @@ import com.scm.reader.livescanner.sdk.image.ImageComparer;
 import com.scm.reader.livescanner.sdk.image.ImageScaler;
 import com.scm.reader.livescanner.search.ImageRecognizer;
 import com.scm.reader.livescanner.search.Search;
+import com.scm.reader.livescanner.util.LogUtils;
 import com.scm.shortcutreadersdk.R;
 
 //import org.apache.http.entity.mime.content.ByteArrayBody;
@@ -131,7 +131,7 @@ public class KooabaRecognizer implements Recognizer {
     public Search sendForRecognition(byte image[])
             throws IOException, NoSuchAlgorithmException, JSONException {
 
-        Log.d("KooabaRecognizer", "send for recognition");
+        LogUtils.logDebug("KooabaRecognizer", "send for recognition");
         Search search = null;
         ImageRecognizer imageRecognizer = new ImageRecognizer();
 

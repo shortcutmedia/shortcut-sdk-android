@@ -20,7 +20,8 @@ package com.scm.reader.livescanner.sdk.camera;
 import android.hardware.Camera;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
+
+import com.scm.reader.livescanner.util.LogUtils;
 
 class AutoFocusCallback implements Camera.AutoFocusCallback {
 
@@ -42,12 +43,12 @@ class AutoFocusCallback implements Camera.AutoFocusCallback {
       Message message = autoFocusHandler.obtainMessage(autoFocusMessage, success);
       // Simulate continuous autofocus by sending a focus request every
       // AUTOFOCUS_INTERVAL_MS milliseconds.
-      Log.d(TAG, "Got auto-focus callback; requesting another");
+      LogUtils.logDebug(TAG, "Got auto-focus callback; requesting another");
       autoFocusHandler.sendMessageDelayed(message, AUTOFOCUS_INTERVAL_MS);
       autoFocusHandler = null;
 
     } else {
-      Log.d(TAG, "Got auto-focus callback, but no handler for it");
+      LogUtils.logDebug(TAG, "Got auto-focus callback, but no handler for it");
     }
   }
 }

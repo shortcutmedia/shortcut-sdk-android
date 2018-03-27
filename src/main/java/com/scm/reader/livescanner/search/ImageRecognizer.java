@@ -120,8 +120,8 @@ public class ImageRecognizer {
             throw e;
         }
 
-        Log.d(TAG, "HTTP Status: " + requestBuilder.getResponseStatus());
-        Log.d(TAG, "HTTP Response: " + requestBuilder.getResponseBody());
+        LogUtils.logDebug(TAG, "HTTP Status: " + requestBuilder.getResponseStatus());
+        LogUtils.logDebug(TAG, "HTTP Response: " + requestBuilder.getResponseBody());
 
         Search result = null;
         try {

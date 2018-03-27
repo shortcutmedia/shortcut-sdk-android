@@ -24,12 +24,11 @@ import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.LifecycleObserver;
 import android.arch.lifecycle.OnLifecycleEvent;
 import android.location.Location;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 
 import com.scm.reader.livescanner.sdk.KEvent;
+import com.scm.reader.livescanner.util.LogUtils;
 import com.scm.shortcutreadersdk.R;
 
 /**
@@ -145,7 +144,7 @@ public abstract class ShortcutSearchView implements LifecycleObserver {
         infoButton.setImageResource(R.drawable.shortcut_sdk_ibuttonstates);
         infoButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                Log.d(TAG, "InfoButton clicked");
+                LogUtils.logDebug(TAG, "InfoButton clicked");
                 if (isInfoViewOpen) {
                     closeInfoView();
                 } else {
@@ -168,13 +167,13 @@ public abstract class ShortcutSearchView implements LifecycleObserver {
     }
 
     public void openInfoView() {
-        Log.d(TAG, "open InfoView");
+        LogUtils.logDebug(TAG, "open InfoView");
         mInfoButtonCallback.onInfoViewOpen();
         isInfoViewOpen = true;
     }
 
     public void closeInfoView() {
-        Log.d(TAG, "close InfoView");
+        LogUtils.logDebug(TAG, "close InfoView");
         mInfoButtonCallback.onInfoViewClose();
         isInfoViewOpen = false;
     }

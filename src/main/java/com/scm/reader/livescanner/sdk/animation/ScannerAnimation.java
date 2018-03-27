@@ -21,12 +21,12 @@ package com.scm.reader.livescanner.sdk.animation;
 
 import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 
+import com.scm.reader.livescanner.util.LogUtils;
 import com.scm.reader.livescanner.util.Utils;
 import com.scm.shortcutreadersdk.R;
 
@@ -54,7 +54,7 @@ public class ScannerAnimation {
 	    screenHeight = Utils.getScreenResolution(manager).y;
 
 		bottomBarHeight = activity.getResources().getDimensionPixelSize(R.dimen.shortcut_sdk_bottom_toolbar);
-		Log.d("Animation", bottomBarHeight +"");
+		LogUtils.logDebug("Animation", bottomBarHeight +"");
 		ta = new TranslateAnimation(-screenWidth,  0, -screenHeight, -bottomBarHeight);
 		ta.initialize(screenWidth*2, screenHeight*2, screenWidth*2, screenHeight*2);
 	}

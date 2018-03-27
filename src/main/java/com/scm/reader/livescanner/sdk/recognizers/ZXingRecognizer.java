@@ -22,7 +22,7 @@ package com.scm.reader.livescanner.sdk.recognizers;
 import java.util.Date;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.Log;
+
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.ChecksumException;
 import com.google.zxing.FormatException;
@@ -37,6 +37,7 @@ import com.google.zxing.common.HybridBinarizer;
 import com.scm.reader.livescanner.sdk.camera.CameraManager;
 import com.scm.reader.livescanner.sdk.zxing.PlanarYUVLuminanceSource;
 import com.scm.reader.livescanner.search.Search;
+import com.scm.reader.livescanner.util.LogUtils;
 
 public class ZXingRecognizer  {
   private CameraManager cameraManager;
@@ -63,14 +64,14 @@ public class ZXingRecognizer  {
     	BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
         Reader reader = new MultiFormatReader();
         Result result = null;
-        Log.d("QR Decoder", "waiting");
+        LogUtils.logDebug("QR Decoder", "waiting");
         try {
 			result = reader.decode(bitmap);
 			if(result!=null){
-				Log.d("QR Decoder", "result is not null");
-				Log.d("QR Decoder", result.getText()+"");
+				LogUtils.logDebug("QR Decoder", "result is not null");
+				LogUtils.logDebug("QR Decoder", result.getText()+"");
 			}else{
-				Log.d("QR Decoder", "result is null");
+				LogUtils.logDebug("QR Decoder", "result is null");
 			}
 	
 		} catch (NotFoundException e) {
@@ -107,7 +108,7 @@ public class ZXingRecognizer  {
 	  //TODO remove log.d tags
 	  Search search = new Search();
 	  if (result != null){
-		  Log.d("ZXingRecognizer", "zxingResponse != null");
+		  LogUtils.logDebug("ZXingRecognizer", "zxingResponse != null");
 		  search.setImage(search.createByteArray(barcodeBitmap));
 		  search.setUrl(result.getText());
 		  search.setTitle(result.getText());
@@ -115,7 +116,7 @@ public class ZXingRecognizer  {
 		  search.setRecognized(true);
 		  search.setIsQrcode(true);
 	  }else {
-		  Log.d("ZXingRecognizer", "zxingResponse == null");
+		  LogUtils.logDebug("ZXingRecognizer", "zxingResponse == null");
 	  }
 	  return search;
   }

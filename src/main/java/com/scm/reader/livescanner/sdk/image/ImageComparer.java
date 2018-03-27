@@ -22,7 +22,8 @@ package com.scm.reader.livescanner.sdk.image;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.util.Log;
+
+import com.scm.reader.livescanner.util.LogUtils;
 
 /**
  * Compares two images using their HSV histograms.
@@ -73,7 +74,7 @@ public class ImageComparer {
       mHSV[quantizationH(hsv[0]) * 9 + quantizationS(hsv[1]) * 3 + quantizationV(hsv[2])] ++;
     }
 
-    Log.d("Histogram computation", "Operation took: " + (System.currentTimeMillis() - startTime) + " ms");
+    LogUtils.logDebug("Histogram computation", "Operation took: " + (System.currentTimeMillis() - startTime) + " ms");
     return mHSV;
   }
 

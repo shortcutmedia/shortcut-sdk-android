@@ -25,6 +25,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import com.scm.reader.livescanner.sdk.zxing.PlanarYUVLuminanceSource;
+import com.scm.reader.livescanner.util.LogUtils;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -206,7 +207,7 @@ public final class CameraManager implements Serializable{
       int leftOffset = (screenResolution.x - width) / 2;
       int topOffset = (screenResolution.y - height) / 2;
       framingRect = new Rect(leftOffset, topOffset, leftOffset + width, topOffset + height);
-      Log.d(TAG, "Calculated framing rect: " + framingRect);
+      LogUtils.logDebug(TAG, "Calculated framing rect: " + framingRect);
     }
     return framingRect;
   }
@@ -228,7 +229,7 @@ public final class CameraManager implements Serializable{
         // Called early, before init even finished
         return null;
       }
-      Log.d("Camera resolution", cameraResolution.x +", "+cameraResolution.y);
+      LogUtils.logDebug("Camera resolution", cameraResolution.x +", "+cameraResolution.y);
       rect.left = rect.left * cameraResolution.x / screenResolution.x;
       rect.right = rect.right * cameraResolution.x / screenResolution.x;
       rect.top = rect.top * cameraResolution.y / screenResolution.y;
@@ -247,7 +248,7 @@ public final class CameraManager implements Serializable{
    */
   public void setManualFramingRect(int width, int height) {
     if (initialized) {
-    	Log.d("SET MANUAL FRAMING RECT", "INITIALIZED");
+    	LogUtils.logDebug("SET MANUAL FRAMING RECT", "INITIALIZED");
       Point screenResolution = configManager.getScreenResolution();
       if (width > screenResolution.x) {
         width = screenResolution.x;
@@ -258,10 +259,10 @@ public final class CameraManager implements Serializable{
       int leftOffset = (screenResolution.x - width) / 2;
       int topOffset = (screenResolution.y - height) / 2;
       framingRect = new Rect(leftOffset, topOffset, leftOffset + width, topOffset + height);
-      Log.d(TAG, "Calculated manual framing rect: " + framingRect);
+      LogUtils.logDebug(TAG, "Calculated manual framing rect: " + framingRect);
       framingRectInPreview = null;
     } else {
-    	Log.d("SET MANUAL FRAMING RECT", "NOT INITIALIZED");
+    	LogUtils.logDebug("SET MANUAL FRAMING RECT", "NOT INITIALIZED");
       requestedFramingRectWidth = width;
       requestedFramingRectHeight = height;
     }
@@ -282,12 +283,12 @@ public final class CameraManager implements Serializable{
       return null;
     }
     /*
-    Log.d("SOURCE", "image width: "+width);
-    Log.d("SOURCE", "image height: "+height);
-    Log.d("SOURCE", "rect.left "+rect.left);
-    Log.d("SOURCE", "rect.top: "+rect.top);
-    Log.d("SOURCE", "rect.width: "+rect.width());
-    Log.d("SOURCE", "rect.height: "+rect.height());
+    LogUtils.logDebug("SOURCE", "image width: "+width);
+    LogUtils.logDebug("SOURCE", "image height: "+height);
+    LogUtils.logDebug("SOURCE", "rect.left "+rect.left);
+    LogUtils.logDebug("SOURCE", "rect.top: "+rect.top);
+    LogUtils.logDebug("SOURCE", "rect.width: "+rect.width());
+    LogUtils.logDebug("SOURCE", "rect.height: "+rect.height());
     */
     // Go ahead and assume it's YUV rather than die
     return new PlanarYUVLuminanceSource(data, width, height, rect.left, rect.top,

@@ -85,13 +85,13 @@ public class AccelerationListener implements SensorEventListener{
 			deltaZ = Math.abs(lastZ - currentZ);
 			
 			if(deltaX > LIMIT){
-				//Log.d("QueryHandler", "deltaX: " +deltaX);
+				//LogUtils.logDebug("QueryHandler", "deltaX: " +deltaX);
 				moving = true;
 			}else if(deltaY > LIMIT){
-				//Log.d("QueryHandler", "deltaY: " +deltaZ);
+				//LogUtils.logDebug("QueryHandler", "deltaY: " +deltaZ);
 				moving = true;
 			}else if(deltaZ > LIMIT){
-				//Log.d("QueryHandler", "deltaZ: " +deltaZ);
+				//LogUtils.logDebug("QueryHandler", "deltaZ: " +deltaZ);
 				moving = true;
 			}else{
 				moving = false;

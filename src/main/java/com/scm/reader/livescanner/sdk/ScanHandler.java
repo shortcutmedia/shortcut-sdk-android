@@ -23,9 +23,9 @@ import android.content.Context;
 import android.location.Location;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 
 import com.scm.reader.livescanner.sdk.camera.CameraManager;
+import com.scm.reader.livescanner.util.LogUtils;
 import com.scm.shortcutreadersdk.R;
 
 /**
@@ -78,34 +78,34 @@ public class ScanHandler extends Handler {
         }
     } else if (message.what == R.id.shortcut_sdk_restart_recognition) {
         restartPreviewAndRecognize();
-        Log.d(TAG, "RECEIVED restart recognition. Trying to recognize");
+        LogUtils.logDebug(TAG, "RECEIVED restart recognition. Trying to recognize");
     } else if (message.what == R.id.shortcut_sdk_continue_kooaba_recognition) {
-        Log.d(TAG, "RECEIVED continue kooaba recognition");
+        LogUtils.logDebug(TAG, "RECEIVED continue kooaba recognition");
         cameraManager.requestPreviewFrame(queryThread.getHandler(), R.id.shortcut_sdk_recognize);
         kEventListener.onContinueKooabaRecognition((String) message.obj);
     } else if (message.what == R.id.shortcut_sdk_pause_kooaba_recognition) {
-        Log.d(TAG, "RECEIVED continue kooaba recognition");
+        LogUtils.logDebug(TAG, "RECEIVED continue kooaba recognition");
         cameraManager.requestPreviewFrame(queryThread.getHandler(), R.id.shortcut_sdk_recognize_qr_only);
         kEventListener.onPauseKooabaRecognition((String) message.obj);
     } else if (message.what == R.id.shortcut_sdk_recognition_succeeded) {
         state = State.SUCCESS;
-        Log.d(TAG, "RECEIVED recognition succeeded; Should stop!");
+        LogUtils.logDebug(TAG, "RECEIVED recognition succeeded; Should stop!");
         kEventListener.onImageRecognized((KEvent) message.obj);
     } else if (message.what == R.id.shortcut_sdk_recognition_failed) {
         // Decode as fast as possible, so when one decode fails, start another.
-        Log.d(TAG, "RECEIVED recognition failed; Trying again");
+        LogUtils.logDebug(TAG, "RECEIVED recognition failed; Trying again");
         state = State.PREVIEW;
         cameraManager.requestPreviewFrame(queryThread.getHandler(), R.id.shortcut_sdk_recognize);
         //cameraManager.requestPreviewFrame(queryThread.getHandler(), R.id.recognize_qr_only);
         kEventListener.onImageNotRecognized((KEvent) message.obj);
     } else if (message.what == R.id.shortcut_sdk_recognition_info) {
-        Log.d(TAG, "RECEIVED recognition info; Trying again");
+        LogUtils.logDebug(TAG, "RECEIVED recognition info; Trying again");
         kEventListener.onInfo((String) message.obj);
         if (state == State.PREVIEW) {
             cameraManager.requestPreviewFrame(queryThread.getHandler(), R.id.shortcut_sdk_recognize);
         }
     } else if (message.what == R.id.shortcut_sdk_recognition_error) {
-        Log.d(TAG, "RECEIVED recognition error: Should stop!");
+        LogUtils.logDebug(TAG, "RECEIVED recognition error: Should stop!");
         kEventListener.onError((Exception) message.obj);
         cameraManager.requestPreviewFrame(queryThread.getHandler(), R.id.shortcut_sdk_recognize);
     }
@@ -133,7 +133,7 @@ public class ScanHandler extends Handler {
     } catch (InterruptedException e) {
       // continue
     }
-    Log.d(TAG, "The thread should have finished");
+    LogUtils.logDebug(TAG, "The thread should have finished");
     // Be absolutely sure we don't send any queued up messages
     removeMessages(R.id.shortcut_sdk_recognition_failed);
     removeMessages(R.id.shortcut_sdk_recognition_succeeded);

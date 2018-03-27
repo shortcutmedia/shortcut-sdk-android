@@ -19,8 +19,9 @@
 
 package com.scm.reader.livescanner.sdk.responses;
 
-import android.util.Log;
 import com.scm.reader.livescanner.sdk.KInfo;
+import com.scm.reader.livescanner.util.LogUtils;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -53,7 +54,7 @@ public class KResponse implements Response{
    * @throws JSONException if the returned result from the server was invalid JSON.
    */
   public void parse(String rawJSONResponse) throws JSONException {
-    Log.d(TAG, "Raw response: " + rawJSONResponse);
+    LogUtils.logDebug(TAG, "Raw response: " + rawJSONResponse);
     rawResponse = rawJSONResponse;
 
     JSONObject parsed = new JSONObject(rawJSONResponse);

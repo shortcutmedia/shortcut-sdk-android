@@ -21,7 +21,8 @@ import android.graphics.Point;
 import android.hardware.Camera;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
+
+import com.scm.reader.livescanner.util.LogUtils;
 
 final class PreviewCallback implements Camera.PreviewCallback {
 
@@ -45,13 +46,13 @@ final class PreviewCallback implements Camera.PreviewCallback {
     Point cameraResolution = configManager.getCameraResolution();
     Handler thePreviewHandler = previewHandler;
     if (cameraResolution != null && thePreviewHandler != null) {
-      Log.d(TAG, "Got preview callback; Sending image to handler for image");
+      LogUtils.logDebug(TAG, "Got preview callback; Sending image to handler for image");
       Message message = thePreviewHandler.obtainMessage(previewMessage, cameraResolution.x,
           cameraResolution.y, data);
       message.sendToTarget();
       previewHandler = null;
     } else {
-      Log.d(TAG, "Got preview callback, but no handler or resolution available");
+      LogUtils.logDebug(TAG, "Got preview callback, but no handler or resolution available");
     }
   }
 

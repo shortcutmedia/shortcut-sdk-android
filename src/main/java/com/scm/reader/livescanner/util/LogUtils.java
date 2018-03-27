@@ -22,39 +22,45 @@ package com.scm.reader.livescanner.util;
 import android.util.Log;
 
 public class LogUtils {
-  public static final String LOG_TAG = "Shortcut";
+    public static final String LOG_TAG = "Shortcut";
 
-  public static void logInfo(String msg) {
-    Log.i(LOG_TAG, msg);
-  }
+    public static void logInfo(String msg) {
+        Log.i(LOG_TAG, msg);
+    }
 
-  public static void logWarn(String msg) {
-    Log.w(LOG_TAG, msg);
-  }
+    public static void logWarn(String msg) {
+        Log.w(LOG_TAG, msg);
+    }
 
-  public static void logWarn(String msg, Throwable cause) {
-    Log.w(LOG_TAG, msg, cause);
-  }
+    public static void logWarn(String msg, Throwable cause) {
+        Log.w(LOG_TAG, msg, cause);
+    }
 
-  public static void logError(String msg, Throwable cause) {
-    Log.e(LOG_TAG, msg, cause);
-  }
+    public static void logError(String msg, Throwable cause) {
+        Log.e(LOG_TAG, msg, cause);
+    }
 
-  public static void logDebug(String msg) {
-    Log.d(LOG_TAG, msg);
-  }
+    public static void logDebug(String msg) {
+        if (debugLogEnabled)
+            Log.d(LOG_TAG, msg);
+    }
 
-  public static void setTestLogging(boolean testLogging) {
-    LogUtils.debugLogEnabled = testLogging;
-  }
+    public static void logDebug(String tag, String msg) {
+        if (debugLogEnabled)
+            Log.d(tag, msg);
+    }
 
-  private static boolean debugLogEnabled = false;
+    public static void setTestLogging(boolean testLogging) {
+        LogUtils.debugLogEnabled = testLogging;
+    }
 
-  public static boolean isDebugLog() {
-    return debugLogEnabled;
-  }
+    private static boolean debugLogEnabled = false;
 
-  public static void setDebugLog(boolean debugLogEnabled) {
-    LogUtils.debugLogEnabled = debugLogEnabled;
-  }
+    public static boolean isDebugLog() {
+        return debugLogEnabled;
+    }
+
+    public static void setDebugLog(boolean debugLogEnabled) {
+        LogUtils.debugLogEnabled = debugLogEnabled;
+    }
 }

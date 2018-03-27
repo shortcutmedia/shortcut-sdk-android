@@ -20,7 +20,8 @@
 package com.scm.reader.livescanner.sdk.image;
 
 import android.graphics.*;
-import android.util.Log;
+
+import com.scm.reader.livescanner.util.LogUtils;
 
 import java.io.ByteArrayOutputStream;
 
@@ -55,19 +56,19 @@ public class ImageScaler {
    * @return a byte[] array representing the scaled down image
    */
   public byte[] compress(byte[] data, int width, int height) {
-    Log.d(TAG, "Original image size: " + (data.length / 1024) + "kB");
+    LogUtils.logDebug(TAG, "Original image size: " + (data.length / 1024) + "kB");
 
     byte[] jdata = convertToJPEGEncoded(data, width, height);
     Bitmap bm = BitmapFactory.decodeByteArray(jdata, 0, jdata.length);
-    Log.d(TAG, "Before scaling: " + bm.getWidth() + "x" + bm.getHeight());
+    LogUtils.logDebug(TAG, "Before scaling: " + bm.getWidth() + "x" + bm.getHeight());
 
     bm = scaleBitmap(bm, width, height);
-    Log.d(TAG, "After scaling: " + bm.getWidth() + "x" + bm.getHeight());
+    LogUtils.logDebug(TAG, "After scaling: " + bm.getWidth() + "x" + bm.getHeight());
     
     ByteArrayOutputStream out = new ByteArrayOutputStream();
     bm.compress(Bitmap.CompressFormat.JPEG, jpegQuality, out);
 
-    Log.d(TAG, "After compression: " + (out.toByteArray().length / 1024) + "Kb");
+    LogUtils.logDebug(TAG, "After compression: " + (out.toByteArray().length / 1024) + "Kb");
 
     bm.recycle();
     return out.toByteArray();

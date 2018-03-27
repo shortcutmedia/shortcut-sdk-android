@@ -22,14 +22,12 @@ package com.scm.reader.resultPage.ui;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
+import com.scm.reader.livescanner.util.LogUtils;
 import com.scm.shortcutreadersdk.R;
-
-import static com.scm.util.LogUtils.LOGD;
-import static com.scm.util.LogUtils.makeLogTag;
 
 public class ItemViewActivity extends AppCompatActivity implements ItemViewFragment.UserAgentBuilderCallback {
 
-    protected static final String TAG = makeLogTag(ItemViewActivity.class);
+    protected static final String TAG = ItemViewActivity.class.getSimpleName();
 
     protected ItemViewFragment createFragment() {
         return new ItemViewFragment();
@@ -38,7 +36,7 @@ public class ItemViewActivity extends AppCompatActivity implements ItemViewFragm
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        LOGD(TAG, "onCreate");
+        LogUtils.logDebug(TAG, "onCreate");
         setContentView(R.layout.shortcut_sdk_activity_shortcut_result);
         if (savedInstanceState == null) {
             ItemViewFragment ivf = createFragment();

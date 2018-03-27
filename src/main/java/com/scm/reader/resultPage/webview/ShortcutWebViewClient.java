@@ -26,12 +26,12 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
-import android.util.Log;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 
 import com.scm.reader.livescanner.config.SDKConfig;
+import com.scm.reader.livescanner.util.LogUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -40,13 +40,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import static com.scm.util.LogUtils.LOGE;
-import static com.scm.util.LogUtils.makeLogTag;
-
 
 public class ShortcutWebViewClient extends WebViewClient {
 
-    public static final String TAG = makeLogTag(ShortcutWebViewClient.class);
+    public static final String TAG = ShortcutWebViewClient.class.getSimpleName();
 
     protected Activity context;
     private OnOpenFileListener onOpenFileListener;
@@ -74,12 +71,12 @@ public class ShortcutWebViewClient extends WebViewClient {
         try {
             json.put("appInfo", appInfo);
             appInfo.put("systemName", "Android");
-            Log.d("WEB", "onPageStarted");
+            LogUtils.logDebug("WEB", "onPageStarted");
             appInfo.put("name", SDKConfig.SDK_UA_NAME);
 
             Iterator it = getWebViewCapabilities().entrySet().iterator();
             while (it.hasNext()) {
-                Map.Entry<String, Boolean> capability = (Map.Entry)it.next();
+                Map.Entry<String, Boolean> capability = (Map.Entry) it.next();
                 appInfo.put(capability.getKey(), capability.getValue());
             }
 
@@ -97,7 +94,7 @@ public class ShortcutWebViewClient extends WebViewClient {
             view.loadUrl("javascript:window.kooaba = eval(" + json.toString(0) + ");");
 
         } catch (JSONException e) {
-            LOGE(TAG, "Could not construct JSON object with app info", e);
+            LogUtils.logError("Could not construct JSON object with app info", e);
         }
 
         super.onPageStarted(view, url, favicon);
