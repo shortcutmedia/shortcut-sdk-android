@@ -192,7 +192,7 @@ public class LegacyCamera {
         callback.onAutoFocus(false, mCamera);
     }
 
-    protected Size configurePreviewSize(int surfaceWidth, int surfaceHeight, Camera.Parameters p) {
+    private Size configurePreviewSize(int surfaceWidth, int surfaceHeight, Camera.Parameters p) {
         int previewWidth = surfaceWidth;
         int previewHeight = surfaceHeight;
 
@@ -213,7 +213,7 @@ public class LegacyCamera {
         return new Size(previewWidth, previewHeight);
     }
 
-    protected void configureFrameRate(Camera.Parameters p) {
+    private void configureFrameRate(Camera.Parameters p) {
         List<Integer> frameRates = p.getSupportedPreviewFrameRates();
         if (frameRates != null) {
             Integer max = Collections.max(frameRates);
@@ -221,13 +221,13 @@ public class LegacyCamera {
         }
     }
 
-    protected void configureFlashMode(Camera.Parameters p) {
+    private void configureFlashMode(Camera.Parameters p) {
         if (isSupported(Camera.Parameters.FLASH_MODE_AUTO, p.getSupportedFlashModes())) {
             p.setFlashMode(Camera.Parameters.FLASH_MODE_AUTO);
         }
     }
 
-    protected void configureFocusMode(Camera.Parameters p) {
+    private void configureFocusMode(Camera.Parameters p) {
         if (isSupported(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE, p.getSupportedFocusModes())) {
             logInfo("Device supports continuous focus, enabling it");
             p.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
@@ -239,14 +239,14 @@ public class LegacyCamera {
         }
     }
 
-    protected boolean configureRotation(Camera camera) {
+    private boolean configureRotation(Camera camera) {
         Display display = ((WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
         int rotation = calculateRotation(display);
         camera.setDisplayOrientation(rotation);
         return rotation % 180 != 0;
     }
 
-    protected Matrix calculateTextureTransform(Size textureSize, Size previewSize, boolean isSensorRotated) {
+    private Matrix calculateTextureTransform(Size textureSize, Size previewSize, boolean isSensorRotated) {
         float ratioTexture = textureSize.width / textureSize.height;
         float ratioPreview = previewSize.width / previewSize.height;
         if (isSensorRotated) {
@@ -306,11 +306,11 @@ public class LegacyCamera {
         return finalRotation;
     }
 
-    protected void configureJPEGQuality(Camera.Parameters p) {
+    private void configureJPEGQuality(Camera.Parameters p) {
         p.setJpegQuality(KConfig.getConfig().getUploadJpegQuality());
     }
 
-    protected void configurePictureSize(Camera.Parameters p) {
+    private void configurePictureSize(Camera.Parameters p) {
         // according to this http://stackoverflow.com/questions/6982366/the-picture-taken-by-camera-of-android-2-3-3-cant-display-normally
         // setPictureSize always needs to be set in Android 2.3.3;
         // This condition returns the url where the image will be stored. I don't see any connection between
