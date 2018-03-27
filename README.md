@@ -4,15 +4,15 @@
 
 This SDK provides two components that allow to interact with the Shortcut Image Recognition Service:
 - The first component consists of two classes, `CameraView` and `ScannerView`, which are using the camera to 
-campture image data which then is submitted to the image recognition service. 
+capture image data which then is submitted to the image recognition service. 
 It reports image recognition results back to you. 
-- The second compontent is a WebView (class `ItemView`) that displays a simple rendition of a (recognized) item. 
+- The second component is a WebView (class `ItemView`) that displays a simple rendition of a (recognized) item. 
 
 You can easily combine these two components by using the Camera/Scanner view to get an item and then pass it on to the Item view to display it. Or you can create a customized view to present a recognized item.
 
 In addition to these two components the SDK also provides a lower-level interface to submit image recognition queries without using the scanner view.
 
-The SDK works with Android API 8 to 21.
+The SDK requires minimum API level 14 (Android 4.0)
 
 To see the SDK in action check out this [example app](https://github.com/shortcutmedia/shortcut-sdk-android-example).
 
@@ -22,6 +22,28 @@ There is also an [iOS version of the Shortcut SDK](https://github.com/shortcutme
 # Installation
 
 See the instructions bellow how to integrate the SDK into your project. 
+1. Add jCenter repo to your project level build.gradle (it's the default repo for Android so it should be there already)
+```gradle
+allprojects {
+    repositories {
+        ...
+        jcenter()
+    }
+}
+```
+2. Open the build.gradle file for your app or module and add the Shortuct SDK artifact.
+```gradle
+implementation "com.shortcutmedia.shortcut.sdk:shortcut-sdk:1.1.0"
+```
+3. Add Shortcut API keys to your Android Manifest. The ones you see bellow are for testing purposes, 
+```
+ <meta-data
+    android:name="com.shortcutmedia.shortcut.sdk.API_KEY"
+    android:value="40552bf6b886ab0a89a50712b256bb423dd9e180" />
+ <meta-data
+    android:name="com.shortcutmedia.shortcut.sdk.API_SECRET"
+    android:value="13679446ee03264934bf97e2b29b9dfc74428ab9" />
+```
 
 1. Checkout the latest source code of the SDK from [github](https://github.com/shortcutmedia/shortcut-sdk-android) to a temporary directory or download the latest version of the source code from the [release page](https://github.com/shortcutmedia/shortcut-sdk-android/releases).
 2. In Android Studio open the project you would like the integrate the SDK or create a new empty project.
