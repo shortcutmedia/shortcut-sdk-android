@@ -162,23 +162,12 @@ public class CameraView extends ShortcutSearchView implements TextureView.Surfac
 
         super.initializeWindow();
 
-        new Thread(new Runnable() {
+        mTextureView.postDelayed(new Runnable() {
             @Override
             public void run() {
-                try {
-                    Thread.sleep(9000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-                mHoldingActivity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mHoldingActivity.findViewById(R.id.take_picture_instructions).setVisibility(View.GONE);
-                    }
-                });
+                mHoldingActivity.findViewById(R.id.take_picture_instructions).setVisibility(View.GONE);
             }
-        }).start();
+        }, 9000);
     }
 
     private void showAllViews() {

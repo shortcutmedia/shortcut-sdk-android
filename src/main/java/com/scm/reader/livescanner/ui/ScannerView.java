@@ -60,6 +60,7 @@ public class ScannerView extends ShortcutSearchView implements KEventListener {
         super.onResume();
         startScanner();
     }
+
     @Override
     public void onPause() {
         super.onPause();
@@ -87,26 +88,13 @@ public class ScannerView extends ShortcutSearchView implements KEventListener {
         window.addContentView(bottomBar, new ViewGroup.LayoutParams(screenWidth, screenHeight));
 
         super.initializeWindow();
-
-        new Thread(new Runnable() {
+        scannerView.postDelayed(new Runnable() {
             @Override
             public void run() {
-                try {
-                    Thread.sleep(9000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-                mHoldingActivity.runOnUiThread(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        mWelcomeGone=true;
-                        mHoldingActivity.findViewById(R.id.take_picture_instructions).setVisibility(View.GONE);
-                    }
-                });
+                mWelcomeGone = true;
+                mHoldingActivity.findViewById(R.id.take_picture_instructions).setVisibility(View.GONE);
             }
-        }).start();
+        }, 9000);
     }
 
     @Override
@@ -159,7 +147,7 @@ public class ScannerView extends ShortcutSearchView implements KEventListener {
             mScannerAnimation.start();
         }
         // don't hide the toast if scanner mode indicator is still displayed
-        if(mWelcomeGone) {
+        if (mWelcomeGone) {
             hideOverlayToast();
         }
     }
