@@ -1,4 +1,5 @@
 
+[ ![Download](https://api.bintray.com/packages/shortcutmedia/shortcut-sdk/ShortcutSDK/images/download.svg) ](https://bintray.com/shortcutmedia/shortcut-sdk/ShortcutSDK/_latestVersion)
 
 # Overview
 
@@ -33,7 +34,7 @@ allprojects {
 ```
 2. Open the build.gradle file for your app or module and add the Shortuct SDK artifact.
 ```gradle
-implementation "com.shortcutmedia.shortcut.sdk:shortcut-sdk:1.1.0"
+implementation 'com.shortcutmedia.shortcut.sdk:shortcut-sdk-android:1.1.0'
 ```
 3. Add Shortcut API keys to your Android Manifest. The ones you see bellow are for testing purposes. With these test keys, you can scan[the standard test image 'Lenna'](http://en.wikipedia.org/wiki/Lenna)
 ```xml
