@@ -23,18 +23,18 @@ There is also an [iOS version of the Shortcut SDK](https://github.com/shortcutme
 # Installation
 
 See the instructions bellow how to integrate the SDK into your project. 
-1. Add jCenter repo to your project level build.gradle (it's the default repo for Android so it should be there already)
+1. Add our Maven repo to your project level build.gradle.
 ```gradle
 allprojects {
     repositories {
         ...
-        jcenter()
+        maven { url "https://dl.bintray.com/shortcutmedia/shortcut-sdk"}
     }
 }
 ```
 2. Open the build.gradle file for your app or module and add the Shortuct SDK artifact.
 ```gradle
-implementation 'com.shortcutmedia.shortcut.sdk:shortcut-sdk-android:1.1.0'
+implementation 'com.shortcutmedia.shortcut.sdk:shortcut-sdk-android:1.1.1'
 ```
 3. Add Shortcut API keys to your Android Manifest. The ones you see bellow are for testing purposes. With these test keys, you can scan [the standard test image 'Lenna'](http://en.wikipedia.org/wiki/Lenna)
 ```xml
