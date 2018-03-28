@@ -36,7 +36,7 @@ allprojects {
 ```gradle
 implementation 'com.shortcutmedia.shortcut.sdk:shortcut-sdk-android:1.1.0'
 ```
-3. Add Shortcut API keys to your Android Manifest. The ones you see bellow are for testing purposes. With these test keys, you can scan[the standard test image 'Lenna'](http://en.wikipedia.org/wiki/Lenna)
+3. Add Shortcut API keys to your Android Manifest. The ones you see bellow are for testing purposes. With these test keys, you can scan [the standard test image 'Lenna'](http://en.wikipedia.org/wiki/Lenna)
 ```xml
  <meta-data
     android:name="com.shortcutmedia.shortcut.sdk.API_KEY"

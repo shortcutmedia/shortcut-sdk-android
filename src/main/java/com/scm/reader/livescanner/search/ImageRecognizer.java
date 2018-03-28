@@ -244,6 +244,11 @@ public class ImageRecognizer {
                         dataToPopulate.addSection(srSection);
                     }
                 }
+                SearchResultItem firstHit = dataToPopulate.getSections().getFirst().getItems().getFirst();
+                dataToPopulate.setTitle(firstHit.getTitle());
+                dataToPopulate.setDetail(firstHit.getDetail());
+                dataToPopulate.setUrl(firstHit.getResultUrl());
+                dataToPopulate.setItemUuid(firstHit.getItemUuid());
             } else {
                 // no match
                 dataToPopulate.setRecognized(false);
