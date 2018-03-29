@@ -23,12 +23,12 @@ There is also an [iOS version of the Shortcut SDK](https://github.com/shortcutme
 # Installation
 
 See the instructions bellow how to integrate the SDK into your project. 
-1. Add our Maven repo to your project level build.gradle.
+1. Add jCenter repo to your project level build.gradle (it's the default repo for Android so it should be there already)
 ```gradle
 allprojects {
     repositories {
         ...
-        maven { url "https://dl.bintray.com/shortcutmedia/shortcut-sdk"}
+        jcenter()
     }
 }
 ```
