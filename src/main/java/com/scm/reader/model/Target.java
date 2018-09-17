@@ -5,6 +5,7 @@ import android.support.annotation.StringDef;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.ArrayList;
 
 /**
  * POJO representing a target.
@@ -32,6 +33,7 @@ public class Target {
     public @ResponseTarget int responseTarget;
     public String responseContent;
     public String thumbnailUrl;
+    public ArrayList<Integer> oids = new ArrayList<>();
 
 
 

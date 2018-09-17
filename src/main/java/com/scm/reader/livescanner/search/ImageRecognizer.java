@@ -239,6 +239,7 @@ public class ImageRecognizer {
                                 url = target.responseContent;
                             }
                             srItem.setResultUrl(url);
+                            srItem.setOids(target.oids);
                             srSection.addItem(srItem);
                         }
                         dataToPopulate.addSection(srSection);

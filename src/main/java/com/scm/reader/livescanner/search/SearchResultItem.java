@@ -21,90 +21,93 @@ package com.scm.reader.livescanner.search;
 
 import com.scm.reader.livescanner.util.Utils;
 
+import java.util.ArrayList;
+
 public class SearchResultItem {
 
-  private long id;
-  private long searchResultSectionId;
-  private String title;
-  private String detail;
-  private String detail2;
-  private boolean hidden;
-  private String imageId;
-  private String imageUrl;
-  private String resultUrl;
-  private String itemUuid;
-  
-  public long getId() {
-    return id;
-  }
+    private long id;
+    private long searchResultSectionId;
+    private String title;
+    private String detail;
+    private String detail2;
+    private boolean hidden;
+    private String imageId;
+    private String imageUrl;
+    private String resultUrl;
+    private String itemUuid;
+    private ArrayList<Integer> oids = new ArrayList<>();
 
-  public void setId(long id) {
-    this.id = id;
-  }
+    public long getId() {
+        return id;
+    }
 
-  public long getSearchResultSectionId() {
-    return searchResultSectionId;
-  }
+    public void setId(long id) {
+        this.id = id;
+    }
 
-  public void setSearchResultSectionId(long searchResultSectionId) {
-    this.searchResultSectionId = searchResultSectionId;
-  }
+    public long getSearchResultSectionId() {
+        return searchResultSectionId;
+    }
 
-  public String getTitle() {
-    return title;
-  }
+    public void setSearchResultSectionId(long searchResultSectionId) {
+        this.searchResultSectionId = searchResultSectionId;
+    }
 
-  public void setTitle(String title) {
-    this.title = title;
-  }
+    public String getTitle() {
+        return title;
+    }
 
-  public String getDetail() {
-    return detail;
-  }
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-  public void setDetail(String detail) {
-    this.detail = detail;
-  }
+    public String getDetail() {
+        return detail;
+    }
 
-  public String getDetail2() {
-    return detail2;
-  }
+    public void setDetail(String detail) {
+        this.detail = detail;
+    }
 
-  public void setDetail2(String detail2) {
-    this.detail2 = detail2;
-  }
+    public String getDetail2() {
+        return detail2;
+    }
 
-  public boolean isHidden() {
-    return hidden;
-  }
+    public void setDetail2(String detail2) {
+        this.detail2 = detail2;
+    }
 
-  public void setHidden(boolean hidden) {
-    this.hidden = hidden;
-  }
+    public boolean isHidden() {
+        return hidden;
+    }
 
-  public String getImageId() {
-    return imageId;
-  }
+    public void setHidden(boolean hidden) {
+        this.hidden = hidden;
+    }
 
-  public void setImageId(String imageId) {
-    this.imageId = imageId;
-  }
+    public String getImageId() {
+        return imageId;
+    }
 
-  public String getImageUrl() {
-    return imageUrl;
-  }
+    public void setImageId(String imageId) {
+        this.imageId = imageId;
+    }
 
-  public void setImageUrl(String imageUrl) {
-    this.imageUrl = imageUrl;
-  }
+    public String getImageUrl() {
+        return imageUrl;
+    }
 
-  public String getResultUrl() {
-    return resultUrl;
-  }
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 
-  public void setResultUrl(String resultUrl) {
-    this.resultUrl = resultUrl;
-  }
+    public String getResultUrl() {
+        return resultUrl;
+    }
+
+    public void setResultUrl(String resultUrl) {
+        this.resultUrl = resultUrl;
+    }
 
     public String getItemUuid() {
         return itemUuid;
@@ -115,34 +118,41 @@ public class SearchResultItem {
     }
 
     @Override
-  public int hashCode() {
-    int titleHash = title != null ? title.hashCode() : 1;
-    int detailHash = detail != null ? detail.hashCode() : 1;
-    int detail2Hash = detail2 != null ? detail2.hashCode() : 1;
-    int imageIdHash = imageId != null ? imageId.hashCode() : 1;
-    int imageUrlHash = imageUrl != null ? imageUrl.hashCode() : 1;
-    int resultUrlHash = resultUrl != null ? resultUrl.hashCode() : 1;
+    public int hashCode() {
+        int titleHash = title != null ? title.hashCode() : 1;
+        int detailHash = detail != null ? detail.hashCode() : 1;
+        int detail2Hash = detail2 != null ? detail2.hashCode() : 1;
+        int imageIdHash = imageId != null ? imageId.hashCode() : 1;
+        int imageUrlHash = imageUrl != null ? imageUrl.hashCode() : 1;
+        int resultUrlHash = resultUrl != null ? resultUrl.hashCode() : 1;
 
-    return (int) (id + searchResultSectionId + titleHash +
-      detailHash + detail2Hash + imageIdHash + imageUrlHash + resultUrlHash);
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (o instanceof SearchResultItem) {
-      SearchResultItem other = (SearchResultItem) o;
-
-      return id == other.id &&
-        searchResultSectionId == other.searchResultSectionId &&
-        Utils.nullOrEqual(title, other.title) &&
-        Utils.nullOrEqual(detail, other.detail) &&
-        Utils.nullOrEqual(detail2, other.detail2) &&
-        hidden == other.hidden &&
-        Utils.nullOrEqual(imageId, other.imageId) &&
-        Utils.nullOrEqual(imageUrl, other.imageUrl) &&
-        Utils.nullOrEqual(resultUrl, other.resultUrl);
+        return (int) (id + searchResultSectionId + titleHash +
+                detailHash + detail2Hash + imageIdHash + imageUrlHash + resultUrlHash);
     }
-    return false;
-  }
-  
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof SearchResultItem) {
+            SearchResultItem other = (SearchResultItem) o;
+
+            return id == other.id &&
+                    searchResultSectionId == other.searchResultSectionId &&
+                    Utils.nullOrEqual(title, other.title) &&
+                    Utils.nullOrEqual(detail, other.detail) &&
+                    Utils.nullOrEqual(detail2, other.detail2) &&
+                    hidden == other.hidden &&
+                    Utils.nullOrEqual(imageId, other.imageId) &&
+                    Utils.nullOrEqual(imageUrl, other.imageUrl) &&
+                    Utils.nullOrEqual(resultUrl, other.resultUrl);
+        }
+        return false;
+    }
+
+    public ArrayList<Integer> getOids() {
+        return oids;
+    }
+
+    public void setOids(ArrayList<Integer> oids) {
+        this.oids = oids;
+    }
 }

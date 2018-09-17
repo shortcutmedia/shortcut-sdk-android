@@ -6,6 +6,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Locale;
 
 
@@ -29,6 +30,7 @@ public class TargetBuilder {
     private static final String VUFORIA_METADATA_RESPONSE_KEY = "response";
     private static final String VUFORIA_METADATA_RESPONSE_TARGET_KEY = "target";
     private static final String VUFORIA_METADATA_RESPONSE_CONTENT_KEY = "content";
+    private static final String VUFORIA_METADATA_RESPONSE_OIDS_KEY = "oids";
 
 
     public static Target fromVuforiaJson(JSONObject jsonTarget) throws JSONException {
@@ -50,10 +52,10 @@ public class TargetBuilder {
         JSONObject targetMetadata = null;
 
         // Get the relevant version.
-        for (int i=0; i < targetMetadataArray.length(); i++) {
+        for (int i = 0; i < targetMetadataArray.length(); i++) {
             targetMetadata = targetMetadataArray.getJSONObject(i);
 
-            if (METADATA_VERSION.equals( targetMetadata.getString(VUFORIA_METADATA_VERSION_KEY) )) {
+            if (METADATA_VERSION.equals(targetMetadata.getString(VUFORIA_METADATA_VERSION_KEY))) {
                 // Correct version found. Do not look further.
                 break;
             }
@@ -76,6 +78,13 @@ public class TargetBuilder {
         target.subtitle = extractFromLanguageString(targetMetadata.getJSONObject(VUFORIA_METADATA_SUBTITLE_KEY));
         target.uuid = targetMetadata.getString(VUFORIA_METADATA_UUID_KEY);
         target.thumbnailUrl = targetMetadata.getString(VUFORIA_METADATA_THUMBNAIL_KEY);
+
+        if (targetMetadata.has(VUFORIA_METADATA_RESPONSE_OIDS_KEY)) {
+            JSONArray oids = targetMetadata.getJSONArray(VUFORIA_METADATA_RESPONSE_OIDS_KEY);
+            for (int i = 0; i < oids.length(); i++) {
+                target.oids.add(oids.getInt(i));
+            }
+        }
 
         JSONObject responseJSON = targetMetadata.getJSONObject(VUFORIA_METADATA_RESPONSE_KEY);
         switch (responseJSON.getString(VUFORIA_METADATA_RESPONSE_TARGET_KEY)) {
